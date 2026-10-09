@@ -36,19 +36,37 @@
         .kpi-card .value { font-size: 1.6rem; font-weight: bold; color: var(--text); margin-bottom: 5px; }
         .kpi-card p { font-size: 0.9rem; color: var(--text-muted); }
         
-        .map-section { background: var(--surface); padding: 30px; border-radius: 8px; box-shadow: var(--shadow); margin: 40px 0; text-align: center; }
-        .map-section h2 { margin-bottom: 10px; }
-        .map-section > p { color: var(--text-muted); margin-bottom: 25px; }
+        .map-section { background: var(--surface); padding: 30px; border-radius: 8px; box-shadow: var(--shadow); margin: 40px 0; }
+        .map-section h2 { margin-bottom: 10px; text-align: center; }
+        .map-section > p { color: var(--text-muted); margin-bottom: 25px; text-align: center; }
         
-        .map-cta { background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%); border-radius: 12px; padding: 50px 30px; color: white; margin: 20px 0; }
-        [data-theme="dark"] .map-cta { background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%); }
-        .map-cta h3 { font-size: 1.5rem; margin-bottom: 15px; }
-        .map-cta p { margin-bottom: 30px; opacity: 0.9; font-size: 1rem; }
-        
-        .btn-map { display: inline-block; background: white; color: #0d47a1; padding: 16px 32px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 1.05rem; margin: 8px; transition: all 0.2s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .btn-map:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
-        .btn-secondary { background: transparent; border: 2px solid rgba(255,255,255,0.8); color: white; }
-        .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+        /* Contenedor del Iframe */
+        .map-wrapper {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            background: var(--bg);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .map-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+        .map-fallback-note {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 15px;
+            padding: 10px;
+            background: var(--bg);
+            border-radius: 4px;
+        }
+        .map-fallback-note a { color: var(--accent); font-weight: 500; }
         
         .section-title { font-size: 1.4rem; margin: 40px 0 20px; padding-bottom: 10px; border-bottom: 2px solid var(--border); color: var(--text); }
         
@@ -87,8 +105,7 @@
         
         @media (max-width: 768px) {
             .header h1 { font-size: 1.4rem; }
-            .map-cta { padding: 30px 20px; }
-            .btn-map { display: block; margin: 10px auto; max-width: 320px; }
+            .map-wrapper { height: 400px; } /* Altura reducida para móviles */
             .kpi-card .value { font-size: 1.3rem; }
         }
     </style>
@@ -127,25 +144,25 @@
             </div>
         </div>
 
+        <!-- SECCIÓN DEL VISOR INCRUSTADO -->
         <section class="map-section">
             <h2>🗺️ Visor Cartográfico Interactivo</h2>
             <p>Publicación en vivo alimentada desde QGIS (<code>puntos_afectados_reales_v2.shp</code>)</p>
             
-            <div class="map-cta">
-                <h3>Mapa de Riesgos - Quebrada Honda</h3>
-                <p>El visor interactivo se abre en una ventana independiente<br>para garantizar compatibilidad total con todos los navegadores.</p>
-                <!-- ENLACE DIRECTO Y SEGURO -->
-                <a href="https://qgis2onlinemap.com/v/9e8e4daa" target="_blank" rel="noopener noreferrer" class="btn-map" onclick="window.open(this.href, '_blank', 'noopener,noreferrer'); return false;">
-                    🗺️ Abrir Visor de Mapas
-                </a>
-                <a href="https://qgis2onlinemap.com/v/9e8e4daa" target="_blank" rel="noopener noreferrer" class="btn-map btn-secondary" onclick="window.open(this.href, '_blank', 'noopener,noreferrer'); return false;">
-                    Ver en Pantalla Completa ↗
-                </a>
+            <div class="map-wrapper">
+                <iframe 
+                    src="https://qgis2onlinemap.com/v/9e8e4daa" 
+                    title="Visor Cartográfico Interactivo - Quebrada Honda"
+                    sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+                    loading="lazy"
+                    allowfullscreen>
+                </iframe>
             </div>
             
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 20px;">
-                ✓ Servidor QGIS Web Activo &nbsp;|&nbsp; ✓ Actualización en tiempo real &nbsp;|&nbsp; ✓ Compatible con todos los dispositivos
-            </p>
+            <div class="map-fallback-note">
+                ⚠️ Si el mapa aparece en blanco, es posible que una extensión de privacidad de tu navegador esté bloqueando marcos incrustados. 
+                En ese caso, <a href="https://qgis2onlinemap.com/v/9e8e4daa" target="_blank" rel="noopener">haz clic aquí para abrir el visor en una pestaña nueva</a>.
+            </div>
         </section>
 
         <h2 class="section-title">Matriz de Evaluación de Riesgos por Punto Crítico</h2>
@@ -294,7 +311,7 @@
         <p>Desarrollado por <strong>Rafael Leonardo Ruiz</strong></p>
         <p>Modelación SIG/GEE (ALOS AW3D30 / MERIT Hydro)</p>
         <p style="margin-top: 15px;">
-            <a href="https://qgis2onlinemap.com/v/9e8e4daa" target="_blank" rel="noopener noreferrer">🗺️ Visor Interactivo Qgis2OnlineMap ↗</a>
+            <a href="https://qgis2onlinemap.com/v/9e8e4daa" target="_blank" rel="noopener">🗺️ Visor Interactivo Qgis2OnlineMap ↗</a>
         </p>
     </footer>
 
