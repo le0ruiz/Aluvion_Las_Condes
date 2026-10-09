@@ -5,33 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Análisis de Riesgo y Afectación: Aluvión San Carlos de Apoquindo | R. L. Ruiz</title>
     <meta name="description" content="Análisis científico y modelación SIG/GEE para la gestión de riesgos por aluviones en Quebrada Honda, Las Condes.">
-    <!-- Chart.js para visualización de datos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg-body: #f4f6f9;
-            --bg-surface: #ffffff;
-            --bg-code: #f8f9fa;
-            --text-primary: #212529;
-            --text-secondary: #495057;
-            --text-muted: #6c757d;
-            --border: #dee2e6;
-            --accent: #0d47a1;
-            --accent-light: #e3f2fd;
-            --risk-5: #b71c1c; --risk-4: #e65100; --risk-3: #f57f17; --risk-2: #2e7d32; --risk-1: #1b5e20;
+            --bg-body: #f4f6f9; --bg-surface: #ffffff; --bg-code: #f8f9fa;
+            --text-primary: #212529; --text-secondary: #495057; --text-muted: #6c757d;
+            --border: #dee2e6; --accent: #0d47a1; --accent-light: #e3f2fd;
             --shadow: 0 2px 4px rgba(0,0,0,0.05);
             --font-serif: Georgia, 'Times New Roman', serif;
             --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             --font-mono: 'Courier New', Courier, monospace;
         }
-
         [data-theme="dark"] {
             --bg-body: #121212; --bg-surface: #1e1e1e; --bg-code: #2d2d2d;
             --text-primary: #e9ecef; --text-secondary: #adb5bd; --text-muted: #868e96;
             --border: #343a40; --accent: #64b5f6; --accent-light: #1a232e;
             --shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: var(--font-sans); background-color: var(--bg-body); color: var(--text-primary); line-height: 1.6; transition: background 0.3s, color 0.3s; }
 
@@ -59,13 +49,38 @@
 
         .figure-container { background: var(--bg-surface); padding: 20px; border-radius: 8px; box-shadow: var(--shadow); margin-bottom: 20px; }
         .figure-caption { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px; font-style: italic; }
-        .map-wrapper { position: relative; width: 100%; padding-bottom: 60%; background: #e9ecef; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
-        .map-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
-        .map-fallback { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--bg-surface); text-align: center; padding: 20px; }
-        .map-fallback a { display: inline-block; margin-top: 15px; background: var(--accent); color: white; padding: 10px 20px; border-radius: 4px; text-decoration: none; font-weight: bold; }
+        
+        /* MAPA MEJORADO */
+        .map-wrapper { 
+            position: relative; 
+            width: 100%; 
+            padding-bottom: 60%; 
+            background: #e9ecef; 
+            border: 1px solid var(--border); 
+            border-radius: 4px; 
+            overflow: hidden; 
+        }
+        .map-wrapper iframe { 
+            position: absolute; top: 0; left: 0; 
+            width: 100%; height: 100%; border: 0; 
+        }
+        .map-fallback { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            display: none; flex-direction: column; align-items: center; justify-content: center; 
+            background: var(--bg-surface); text-align: center; padding: 30px; 
+        }
+        .map-fallback.visible { display: flex; }
+        .map-fallback p { color: var(--text-secondary); margin-bottom: 15px; max-width: 400px; }
+        .map-fallback .btn-open { 
+            display: inline-block; background: var(--accent); color: white; 
+            padding: 12px 24px; border-radius: 4px; text-decoration: none; 
+            font-weight: bold; margin: 5px; transition: opacity 0.2s;
+        }
+        .map-fallback .btn-open:hover { opacity: 0.85; }
+        .map-fallback .btn-secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+        
         .figure-source { font-size: 0.8rem; color: var(--text-muted); margin-top: 10px; text-align: right; }
 
-        /* Gráficos */
         .chart-container { background: var(--bg-surface); padding: 20px; border-radius: 8px; box-shadow: var(--shadow); position: relative; height: 400px; width: 100%; }
 
         .table-container { overflow-x: auto; background: var(--bg-surface); border-radius: 8px; box-shadow: var(--shadow); margin-bottom: 20px; }
@@ -152,21 +167,41 @@
             <h2 class="section-title">1. Análisis Espacial y Modelación</h2>
             <div class="figure-container">
                 <p class="figure-caption"><strong>Figura 1:</strong> Visor Cartográfico Interactivo de Amenazas y Puntos Críticos. Publicación en vivo alimentada desde QGIS (<code>puntos_afectados_reales_v2.shp</code>).</p>
+                
                 <div class="map-wrapper">
-                    <iframe src="https://qgis2onlinemap.com/v/9e8e4daa" title="Mapa de Riesgo Quebrada Honda" allowfullscreen loading="lazy"></iframe>
-                    <div class="map-fallback" id="map-fallback" style="display: none;">
-                        <p>El servidor de mapas restringe la incrustación directa.</p>
-                        <a href="https://qgis2onlinemap.com/v/9e8e4daa" target="_blank">Abrir Visor en Pestaña Nueva ↗</a>
+                    <!-- 
+                        IMPORTANTE: El src apunta a "/visor" (ruta proxy de Vercel).
+                        Si el proxy falla, el fallback se activará automáticamente.
+                    -->
+                    <iframe 
+                        id="map-iframe"
+                        src="/visor" 
+                        title="Mapa de Riesgo Quebrada Honda" 
+                        allowfullscreen 
+                        loading="lazy"
+                        sandbox="allow-scripts allow-same-origin allow-popups"
+                    ></iframe>
+                    
+                    <!-- Fallback elegante -->
+                    <div class="map-fallback" id="map-fallback">
+                        <p>⚠️ El visor no pudo cargarse directamente debido a restricciones de seguridad del servidor de mapas.</p>
+                        <div>
+                            <a href="https://qgis2onlinemap.com/v/351d29ac" target="_blank" rel="noopener" class="btn-open">
+                                🗺️ Abrir Visor en Pestaña Nueva
+                            </a>
+                            <a href="/visor" target="_blank" rel="noopener" class="btn-open btn-secondary">
+                                🔄 Reintentar vía Proxy
+                            </a>
+                        </div>
                     </div>
                 </div>
                 <p class="figure-source">Fuente: Elaboración propia mediante Qgis2OnlineMap. Servidor QGIS Web Activo.</p>
             </div>
         </section>
 
-        <!-- NUEVA SECCIÓN: VISUALIZACIÓN DE DATOS -->
         <section class="section">
             <h2 class="section-title">2. Análisis Estadístico de Vulnerabilidad</h2>
-            <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 0.95rem;">Distribución de los puntos críticos según su nivel de riesgo morfométrico y cota de elevación, extraído de la base de datos espacial.</p>
+            <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 0.95rem;">Distribución de los puntos críticos según su nivel de riesgo morfométrico y cota de elevación.</p>
             
             <div class="figure-container">
                 <p class="figure-caption"><strong>Figura 2:</strong> Correlación entre Nivel de Riesgo (Escala 1-5) y Cota Morfométrica (msnm) por punto crítico.</p>
@@ -351,7 +386,7 @@
     <footer>
         <p><strong>Breve análisis de afectación de Aluvión San Carlos de Apoquindo</strong></p>
         <p>Desarrollado por Rafael Leonardo Ruiz • Modelación SIG/GEE (ALOS AW3D30 / MERIT Hydro)</p>
-        <p style="margin-top: 5px;">Visor interactivo vía <a href="https://qgis2onlinemap.com/v/9e8e4daa" target="_blank">Qgis2OnlineMap</a></p>
+        <p style="margin-top: 5px;">Visor interactivo vía <a href="https://qgis2onlinemap.com/v/351d29ac" target="_blank" rel="noopener">Qgis2OnlineMap</a></p>
     </footer>
 
     <script>
@@ -362,23 +397,61 @@
             var newTheme = currentTheme === "dark" ? "light" : "dark";
             element.setAttribute("data-theme", newTheme);
             localStorage.setItem("theme", newTheme);
-            updateChartTheme(newTheme);
+            if (riskChart) { riskChart.destroy(); initChart(newTheme); }
         }
 
         document.addEventListener("DOMContentLoaded", function() {
             var savedTheme = localStorage.getItem("theme") || "light";
             document.body.setAttribute("data-theme", savedTheme);
             initChart(savedTheme);
+            setupMapFallback();
         });
 
-        // --- FALLBACK DEL MAPA ---
-        setTimeout(function() {
-            var iframe = document.querySelector('.map-wrapper iframe');
-            var fallback = document.getElementById('map-fallback');
-            if (iframe && iframe.offsetHeight === 0) { fallback.style.display = 'flex'; }
-        }, 3000);
+        // --- DETECCIÓN DE FALLA DEL MAPA ---
+        function setupMapFallback() {
+            const iframe = document.getElementById('map-iframe');
+            const fallback = document.getElementById('map-fallback');
+            
+            // Método 1: Si el iframe no carga contenido en 5 segundos
+            let loadTimeout = setTimeout(() => {
+                // Verificar si el iframe tiene contenido real
+                try {
+                    // Si podemos acceder al contentDocument y está vacío, mostrar fallback
+                    if (!iframe.contentDocument || iframe.contentDocument.body.innerHTML === '') {
+                        fallback.classList.add('visible');
+                    }
+                } catch (e) {
+                    // Error de cross-origin = el iframe cargó algo (aunque no podamos leerlo)
+                    // Pero si el src falló completamente, mostrar fallback
+                    if (iframe.src === '' || iframe.src === window.location.origin + '/visor') {
+                        // Intentar verificar si realmente cargó
+                        fallback.classList.add('visible');
+                    }
+                }
+            }, 5000);
 
-        // --- GRÁFICO CIENTÍFICO (Chart.js) ---
+            // Método 2: Si el iframe dispara error
+            iframe.addEventListener('error', () => {
+                clearTimeout(loadTimeout);
+                fallback.classList.add('visible');
+            });
+
+            // Método 3: Si el onload se dispara pero el contenido parece vacío
+            iframe.addEventListener('load', () => {
+                clearTimeout(loadTimeout);
+                try {
+                    const doc = iframe.contentDocument;
+                    if (doc && doc.body && doc.body.innerHTML.trim() === '') {
+                        fallback.classList.add('visible');
+                    }
+                } catch (e) {
+                    // Cross-origin = el iframe cargó algo externo, está bien
+                    console.log('Mapa cargado desde origen externo (proxy activo)');
+                }
+            });
+        }
+
+        // --- GRÁFICO CIENTÍFICO ---
         let riskChart;
         function initChart(theme) {
             const ctx = document.getElementById('riskChart').getContext('2d');
@@ -433,13 +506,6 @@
                     }
                 }
             });
-        }
-
-        function updateChartTheme(theme) {
-            if(riskChart) {
-                riskChart.destroy();
-                initChart(theme);
-            }
         }
     </script>
 </body>
