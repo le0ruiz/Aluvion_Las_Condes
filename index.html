@@ -11,12 +11,12 @@
         }
         [data-theme="dark"] {
             --bg: #121212; --surface: #1e1e1e; --text: #e9ecef; --accent: #64b5f6;
-            --border: #343a40; --shadow: 0 2px 8px rgba(0,0,0,0.3);
+            --border: #343a40;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
         
-        .header { background: var(--surface); border-bottom: 3px solid var(--accent); padding: 30px 20px; text-align: center; }
+        .header { background: var(--surface); border-bottom: 3px solid var(--accent); padding: 30px 20px; text-align: center; position: relative; }
         .header h1 { font-size: 1.8rem; margin-bottom: 10px; }
         .alert { background: #ffebee; color: #c62828; padding: 15px; border-left: 4px solid #c62828; margin: 20px auto; max-width: 600px; font-weight: bold; }
         
@@ -28,53 +28,60 @@
         .kpi-card .value { font-size: 1.5rem; font-weight: bold; margin: 10px 0; }
         
         .map-section { background: var(--surface); padding: 30px; border-radius: 8px; box-shadow: var(--shadow); margin: 30px 0; }
-        .map-container { 
+        .map-cta { 
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 8px; 
-            padding: 60px 20px; 
+            border-radius: 12px; 
+            padding: 50px 30px; 
             text-align: center; 
             margin: 20px 0;
             color: white;
         }
-        .map-container h3 { font-size: 1.5rem; margin-bottom: 15px; }
-        .map-container p { margin-bottom: 25px; opacity: 0.9; }
+        .map-cta h3 { font-size: 1.8rem; margin-bottom: 15px; }
+        .map-cta p { margin-bottom: 30px; opacity: 0.95; font-size: 1.1rem; }
         .btn-map { 
             display: inline-block; 
             background: white; 
             color: #667eea; 
-            padding: 15px 30px; 
-            border-radius: 6px; 
+            padding: 18px 35px; 
+            border-radius: 8px; 
             text-decoration: none; 
             font-weight: bold; 
             font-size: 1.1rem;
             margin: 10px;
-            transition: transform 0.2s;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        .btn-map:hover { transform: translateY(-2px); }
+        .btn-map:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.2); }
         .btn-secondary { background: transparent; border: 2px solid white; color: white; }
         
         .table-container { overflow-x: auto; background: var(--surface); border-radius: 8px; box-shadow: var(--shadow); margin: 30px 0; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-        th { background: var(--bg); padding: 12px; text-align: left; border-bottom: 2px solid var(--border); }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; min-width: 1000px; }
+        th { background: var(--bg); padding: 15px 12px; text-align: left; border-bottom: 2px solid var(--border); font-weight: 600; }
         td { padding: 12px; border-bottom: 1px solid var(--border); }
-        .badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; }
+        tr:hover { background: var(--bg); }
+        .badge { display: inline-block; padding: 5px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; }
         .badge-5 { background: #ffebee; color: #c62828; }
         .badge-4 { background: #fff3e0; color: #e65100; }
         .badge-3 { background: #fff8e1; color: #f57f17; }
         .badge-2 { background: #e8f5e9; color: #2e7d32; }
         .badge-1 { background: #e0f2f1; color: #1b5e20; }
+        .coord { font-family: monospace; font-size: 0.85rem; color: var(--text); opacity: 0.8; }
         
-        .theme-toggle { position: fixed; top: 20px; right: 20px; background: var(--surface); border: 1px solid var(--border); padding: 10px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; }
+        .theme-toggle { position: fixed; top: 20px; right: 20px; background: var(--surface); border: 1px solid var(--border); padding: 12px; border-radius: 50%; cursor: pointer; font-size: 1.3rem; z-index: 1000; box-shadow: var(--shadow); }
+        
+        footer { text-align: center; padding: 30px; color: var(--text); opacity: 0.7; border-top: 1px solid var(--border); margin-top: 40px; }
+        footer a { color: var(--accent); }
         
         @media (max-width: 768px) {
             .header h1 { font-size: 1.3rem; }
-            .map-container { padding: 40px 15px; }
-            .btn-map { display: block; margin: 10px auto; }
+            .map-cta { padding: 30px 20px; }
+            .btn-map { display: block; margin: 10px auto; max-width: 300px; }
+            table { font-size: 0.8rem; }
         }
     </style>
 </head>
 <body>
-    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Cambiar tema">🌓</button>
     
     <header class="header">
         <h1>Breve análisis de afectación de Aluvión San Carlos de Apoquindo</h1>
@@ -109,71 +116,173 @@
 
         <section class="map-section">
             <h2>🗺️ Visor Cartográfico Interactivo</h2>
-            <p>Publicación en vivo alimentada desde QGIS (<code>puntos_afectados_reales_v2.shp</code>)</p>
+            <p style="margin: 15px 0; color: var(--text); opacity: 0.8;">Publicación en vivo alimentada desde QGIS (<code>puntos_afectados_reales_v2.shp</code>)</p>
             
-            <div class="map-container">
+            <div class="map-cta">
                 <h3>Mapa de Riesgos - Quebrada Honda</h3>
-                <p>El servidor de mapas requiere visualización en ventana independiente</p>
+                <p>El visor interactivo se abre en una ventana independiente<br>para garantizar compatibilidad total</p>
                 <a href="https://qgis2onlinemap.com/v/9e8e4daa" target="_blank" class="btn-map">
-                    🗺️ Abrir Visor de Mapas
+                    ️ Abrir Visor de Mapas
                 </a>
                 <a href="https://qgis2onlinemap.com/v/9e8e4daa" target="_blank" class="btn-map btn-secondary">
-                     Ver Mapa en Pantalla Completa
+                    Ver en Pantalla Completa ↗
                 </a>
             </div>
             
-            <p style="text-align: center; color: var(--text); opacity: 0.7; font-size: 0.9rem;">
-                Servidor QGIS Web Activo • Actualización en tiempo real
+            <p style="text-align: center; color: var(--text); opacity: 0.7; font-size: 0.9rem; margin-top: 20px;">
+                ✓ Servidor QGIS Web Activo • Actualización en tiempo real<br>
+                ✓ Compatible con todos los navegadores y dispositivos
             </p>
         </section>
 
         <section>
-            <h2>Matriz de Evaluación de Riesgos</h2>
+            <h2 style="margin-bottom: 20px;">Matriz de Evaluación de Riesgos por Punto Crítico</h2>
+            <p style="margin-bottom: 20px; color: var(--text); opacity: 0.8;">Información georreferenciada, cota morfométrica, categorización de daño y mitigación prioritaria.</p>
+            
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
-                            <th>ID</th><th>Infraestructura</th><th>Tipo</th><th>Cota</th><th>Riesgo</th><th>Afectación</th><th>Recomendación</th>
+                            <th>ID</th>
+                            <th>Infraestructura / Nodo</th>
+                            <th>Tipo</th>
+                            <th>Coordenadas</th>
+                            <th>Cota</th>
+                            <th>Riesgo</th>
+                            <th>Afectación Proyectada</th>
+                            <th>Medida Recomendada</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>1</td><td><strong>Piscinas Sedimentación</strong></td><td>Obra Hidráulica</td><td>1229m</td><td><span class="badge badge-5">5</span></td><td>Impacto directo marea detritos</td><td>Monitoreo de muros</td></tr>
-                        <tr><td>2</td><td><strong>Parque Natural San Carlos</strong></td><td>Garganta Aluvial</td><td>1085m</td><td><span class="badge badge-5">5</span></td><td>Flujo aluvial activo</td><td>Cierre total accesos</td></tr>
-                        <tr><td>3</td><td><strong>Cruce Las Flores/Plaza</strong></td><td>Vialidad Crítica</td><td>908m</td><td><span class="badge badge-5">5</span></td><td>Embalsamiento vial</td><td>Maquinaria pesada</td></tr>
-                        <tr><td>4</td><td><strong>Piedemonte El Mazo</strong></td><td>Zona Habitacional</td><td>997m</td><td><span class="badge badge-4">4</span></td><td>Flujo hiperconcentrado</td><td>Sacos arena + NJ</td></tr>
-                        <tr><td>5</td><td><strong>Clínica UC Christus</strong></td><td>Salud Crítica</td><td>959m</td><td><span class="badge badge-4">4</span></td><td>Anegamiento subterráneos</td><td>Compuertas estancas</td></tr>
-                        <tr><td>6</td><td><strong>Duoc UC San Carlos</strong></td><td>Educación Superior</td><td>930m</td><td><span class="badge badge-3">3</span></td><td>Lodo perimetral</td><td>Suspensión actividades</td></tr>
-                        <tr><td>7</td><td><strong>Universidad de los Andes</strong></td><td>Educación Superior</td><td>911m</td><td><span class="badge badge-3">3</span></td><td>Escorrentía vial</td><td>Control tránsito</td></tr>
-                        <tr><td>8</td><td><strong>Colegio Cumbres</strong></td><td>Educación Escolar</td><td>1022m</td><td><span class="badge badge-2">2</span></td><td>Escorrentía ladera</td><td>Inspección sumideros</td></tr>
-                        <tr><td>9</td><td><strong>Colegio San Francisco</strong></td><td>Educación Escolar</td><td>878m</td><td><span class="badge badge-2">2</span></td><td>Anegamiento secundario</td><td>Monitoreo drenaje</td></tr>
-                        <tr><td>10</td><td><strong>Cruce Las Condes/San Carlos</strong></td><td>Nodo Vial</td><td>861m</td><td><span class="badge badge-1">1</span></td><td>Acumulación pluvial</td><td>Despeje sumideros</td></tr>
+                        <tr>
+                            <td><strong>1</strong></td>
+                            <td><strong>Piscinas de Sedimentación Qda. Honda</strong></td>
+                            <td>Obra Hidráulica</td>
+                            <td class="coord">-70.485, -33.394</td>
+                            <td><strong>1.229m</strong></td>
+                            <td><span class="badge badge-5">5 Crítico</span></td>
+                            <td>Impacto directo de marea de detritos; saturación y riesgo de sobrepaso</td>
+                            <td>Monitoreo de muros y desobstrucción prioritaria</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2</strong></td>
+                            <td><strong>Acceso Parque Natural San Carlos</strong></td>
+                            <td>Garganta Aluvial</td>
+                            <td class="coord">-70.492, -33.398</td>
+                            <td><strong>1.085m</strong></td>
+                            <td><span class="badge badge-5">5 Crítico</span></td>
+                            <td>Garganta de flujo aluvial activo; desprendimiento masivo</td>
+                            <td>Cierre total de accesos y evacuación</td>
+                        </tr>
+                        <tr>
+                            <td><strong>3</strong></td>
+                            <td><strong>Cruce Camino Las Flores / Av. Plaza</strong></td>
+                            <td>Vialidad Crítica</td>
+                            <td class="coord">-70.5085, -33.408</td>
+                            <td><strong>908m</strong></td>
+                            <td><span class="badge badge-5">5 Crítico</span></td>
+                            <td>Punto crítico de embalsamiento vial; acumulación severa</td>
+                            <td>Maquinaria pesada para despeje</td>
+                        </tr>
+                        <tr>
+                            <td><strong>4</strong></td>
+                            <td><strong>Piedemonte Residencial Cam. El Mazo</strong></td>
+                            <td>Zona Habitacional</td>
+                            <td class="coord">-70.4985, -33.402</td>
+                            <td><strong>997m</strong></td>
+                            <td><span class="badge badge-4">4 Alto</span></td>
+                            <td>Ingreso directo de flujo hiperconcentrado a viviendas</td>
+                            <td>Sacos de arena, barreras NJ y evacuación</td>
+                        </tr>
+                        <tr>
+                            <td><strong>5</strong></td>
+                            <td><strong>Clínica UC Christus San Carlos</strong></td>
+                            <td>Salud Crítica</td>
+                            <td class="coord">-70.5035, -33.4075</td>
+                            <td><strong>959m</strong></td>
+                            <td><span class="badge badge-4">4 Alto</span></td>
+                            <td>Anegamiento severo en accesos y subterráneos</td>
+                            <td>Bombas de achique y compuertas</td>
+                        </tr>
+                        <tr>
+                            <td><strong>6</strong></td>
+                            <td><strong>Duoc UC Sede San Carlos</strong></td>
+                            <td>Educación Superior</td>
+                            <td class="coord">-70.506, -33.406</td>
+                            <td><strong>930m</strong></td>
+                            <td><span class="badge badge-3">3 Medio</span></td>
+                            <td>Acumulación de lodo perimetral y anegamiento</td>
+                            <td>Suspensión de actividades</td>
+                        </tr>
+                        <tr>
+                            <td><strong>7</strong></td>
+                            <td><strong>Universidad de los Andes</strong></td>
+                            <td>Educación Superior</td>
+                            <td class="coord">-70.509, -33.404</td>
+                            <td><strong>911m</strong></td>
+                            <td><span class="badge badge-3">3 Medio</span></td>
+                            <td>Escorrentía concentrada sobre ejes viales</td>
+                            <td>Cierre de accesos y control tránsito</td>
+                        </tr>
+                        <tr>
+                            <td><strong>8</strong></td>
+                            <td><strong>Colegio Cumbres</strong></td>
+                            <td>Educación Escolar</td>
+                            <td class="coord">-70.502, -33.412</td>
+                            <td><strong>1.022m</strong></td>
+                            <td><span class="badge badge-2">2 Bajo</span></td>
+                            <td>Escorrentía pluvial de ladera con arrastre</td>
+                            <td>Inspección de sumideros</td>
+                        </tr>
+                        <tr>
+                            <td><strong>9</strong></td>
+                            <td><strong>Colegio San Francisco de Asís</strong></td>
+                            <td>Educación Escolar</td>
+                            <td class="coord">-70.513, -33.4055</td>
+                            <td><strong>878m</strong></td>
+                            <td><span class="badge badge-2">2 Bajo</span></td>
+                            <td>Anegamiento secundario por saturación</td>
+                            <td>Monitoreo de drenaje</td>
+                        </tr>
+                        <tr>
+                            <td><strong>10</strong></td>
+                            <td><strong>Cruce Av. Las Condes / Av. San Carlos</strong></td>
+                            <td>Nodo Vial Principal</td>
+                            <td class="coord">-70.5175, -33.3995</td>
+                            <td><strong>861m</strong></td>
+                            <td><span class="badge badge-1">1 Mínimo</span></td>
+                            <td>Anegamiento por acumulación pluvial</td>
+                            <td>Gestión de tránsito y despeje</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
         </section>
 
-        <section style="background: var(--surface); padding: 30px; border-radius: 8px; margin: 30px 0;">
-            <h2>Estrategias de Gestión</h2>
-            <h3 style="margin: 20px 0 10px; color: var(--accent);">Prevención Estructural</h3>
-            <ul style="margin-left: 20px;">
-                <li><strong>Desobstrucción de Piscinas:</strong> Limpieza cota 1.229 msnm</li>
-                <li><strong>Muros New Jersey:</strong> Canalización en Camino Las Flores</li>
-                <li><strong>Colectores Pluviales:</strong> Inspección Av. Las Condes/Apoquindo</li>
+        <section style="background: var(--surface); padding: 30px; border-radius: 8px; margin: 30px 0; box-shadow: var(--shadow);">
+            <h2 style="margin-bottom: 25px;">Estrategias de Gestión y Mitigación</h2>
+            
+            <h3 style="margin: 25px 0 15px; color: var(--accent); border-bottom: 2px solid var(--border); padding-bottom: 10px;">1. Prevención y Mitigación Estructural</h3>
+            <ul style="margin-left: 20px; line-height: 2;">
+                <li><strong>Desobstrucción de Piscinas de Decantación:</strong> Limpieza y vaciado prioritario de las obras de retención en la cota 1.229 msnm de la Quebrada Honda.</li>
+                <li><strong>Defensas Fluviales y Muros New Jersey:</strong> Canalización temporal de escorrentía en Camino Las Flores y Av. Plaza para evitar desbordes hacia recintos asistenciales.</li>
+                <li><strong>Mantenimiento de Colectores Pluviales:</strong> Inspección continua de sumideros en Av. Las Condes y Av. Apoquindo.</li>
             </ul>
             
-            <h3 style="margin: 20px 0 10px; color: var(--accent);">Alerta Temprana</h3>
-            <ul style="margin-left: 20px;">
-                <li><strong>Red SAE:</strong> Mensajes evacuación celular</li>
-                <li><strong>Rutas Evacuación:</strong> Av. Apoquindo hacia poniente</li>
-                <li><strong>Protocolo Clínica UC:</strong> Sellado subterráneos</li>
+            <h3 style="margin: 25px 0 15px; color: var(--accent); border-bottom: 2px solid var(--border); padding-bottom: 10px;">2. Preparación y Alerta Temprana</h3>
+            <ul style="margin-left: 20px; line-height: 2;">
+                <li><strong>Red de Alerta SAE:</strong> Activación de mensajes de evacuación celular para el cuadrante precordillerano por sobrepaso de umbral pluviométrico.</li>
+                <li><strong>Rutas de Evacuación Seguras:</strong> Descenso ordenado por Av. Apoquindo hacia el poniente, alejándose del eje de la Quebrada Honda.</li>
+                <li><strong>Protocolo Especial Clínica UC Christus:</strong> Sellado de compuertas estancas en subterráneos e hiper-vigilancia del flujo en la vía pública.</li>
             </ul>
         </section>
     </div>
 
-    <footer style="text-align: center; padding: 30px; color: var(--text); opacity: 0.7; border-top: 1px solid var(--border); margin-top: 40px;">
+    <footer>
         <p><strong>Breve análisis de afectación de Aluvión San Carlos de Apoquindo</strong></p>
-        <p>Desarrollado por Rafael Leonardo Ruiz • Modelación SIG/GEE (ALOS AW3D30 / MERIT Hydro)</p>
-        <p style="margin-top: 10px;"><a href="https://qgis2onlinemap.com/v/9e8e4daa" target="_blank" style="color: var(--accent);">Visor Qgis2OnlineMap</a></p>
+        <p>Desarrollado por <strong>Rafael Leonardo Ruiz</strong></p>
+        <p>Modelación SIG/GEE (ALOS AW3D30 / MERIT Hydro)</p>
+        <p style="margin-top: 15px;"><a href="https://qgis2onlinemap.com/v/9e8e4daa" target="_blank">🗺️ Visor Interactivo Qgis2OnlineMap ↗</a></p>
     </footer>
 
     <script>
@@ -181,7 +290,14 @@
             const body = document.body;
             const current = body.getAttribute('data-theme');
             body.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+            localStorage.setItem('theme', current === 'dark' ? 'light' : 'dark');
         }
+        
+        // Cargar tema guardado
+        document.addEventListener('DOMContentLoaded', () => {
+            const saved = localStorage.getItem('theme');
+            if (saved) document.body.setAttribute('data-theme', saved);
+        });
     </script>
 </body>
 </html>
