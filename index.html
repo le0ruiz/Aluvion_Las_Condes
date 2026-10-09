@@ -50,34 +50,51 @@
         .figure-container { background: var(--bg-surface); padding: 20px; border-radius: 8px; box-shadow: var(--shadow); margin-bottom: 20px; }
         .figure-caption { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px; font-style: italic; }
         
-        /* MAPA MEJORADO */
         .map-wrapper { 
             position: relative; 
             width: 100%; 
-            padding-bottom: 60%; 
+            min-height: 600px;
             background: #e9ecef; 
             border: 1px solid var(--border); 
             border-radius: 4px; 
             overflow: hidden; 
         }
         .map-wrapper iframe { 
-            position: absolute; top: 0; left: 0; 
-            width: 100%; height: 100%; border: 0; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 600px; 
+            border: 0; 
         }
         .map-fallback { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            display: none; flex-direction: column; align-items: center; justify-content: center; 
-            background: var(--bg-surface); text-align: center; padding: 30px; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            display: none; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            background: var(--bg-surface); 
+            text-align: center; 
+            padding: 30px; 
         }
         .map-fallback.visible { display: flex; }
         .map-fallback p { color: var(--text-secondary); margin-bottom: 15px; max-width: 400px; }
         .map-fallback .btn-open { 
-            display: inline-block; background: var(--accent); color: white; 
-            padding: 12px 24px; border-radius: 4px; text-decoration: none; 
-            font-weight: bold; margin: 5px; transition: opacity 0.2s;
+            display: inline-block; 
+            background: var(--accent); 
+            color: white; 
+            padding: 12px 24px; 
+            border-radius: 4px; 
+            text-decoration: none; 
+            font-weight: bold; 
+            margin: 5px; 
+            transition: opacity 0.2s;
         }
         .map-fallback .btn-open:hover { opacity: 0.85; }
-        .map-fallback .btn-secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
         
         .figure-source { font-size: 0.8rem; color: var(--text-muted); margin-top: 10px; text-align: right; }
 
@@ -121,6 +138,7 @@
             .theme-toggle { top: 10px; right: 10px; padding: 6px 10px; font-size: 0.8rem; }
             .section-title { font-size: 1.3rem; }
             .chart-container { height: 300px; }
+            .map-wrapper iframe { height: 400px; }
         }
     </style>
 </head>
@@ -169,28 +187,22 @@
                 <p class="figure-caption"><strong>Figura 1:</strong> Visor Cartográfico Interactivo de Amenazas y Puntos Críticos. Publicación en vivo alimentada desde QGIS (<code>puntos_afectados_reales_v2.shp</code>).</p>
                 
                 <div class="map-wrapper">
-                    <!-- 
-                        IMPORTANTE: El src apunta a "/visor" (ruta proxy de Vercel).
-                        Si el proxy falla, el fallback se activará automáticamente.
-                    -->
+                    <!-- IFRAME ACTUALIZADO CON EMBED=TRUE -->
                     <iframe 
                         id="map-iframe"
-                        src="/visor" 
-                        title="Mapa de Riesgo Quebrada Honda" 
+                        src="https://qgis2onlinemap.com/v/351d29ac?embed=true" 
+                        title="Mapa de Riesgo Quebrada Honda - Aluvión San Carlos de Apoquindo"
                         allowfullscreen 
                         loading="lazy"
-                        sandbox="allow-scripts allow-same-origin allow-popups"
+                        sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
                     ></iframe>
                     
-                    <!-- Fallback elegante -->
+                    <!-- Fallback por si el iframe falla -->
                     <div class="map-fallback" id="map-fallback">
-                        <p>⚠️ El visor no pudo cargarse directamente debido a restricciones de seguridad del servidor de mapas.</p>
+                        <p>️ El visor no pudo cargarse directamente debido a restricciones de seguridad del servidor.</p>
                         <div>
                             <a href="https://qgis2onlinemap.com/v/351d29ac" target="_blank" rel="noopener" class="btn-open">
                                 🗺️ Abrir Visor en Pestaña Nueva
-                            </a>
-                            <a href="/visor" target="_blank" rel="noopener" class="btn-open btn-secondary">
-                                🔄 Reintentar vía Proxy
                             </a>
                         </div>
                     </div>
@@ -412,31 +424,24 @@
             const iframe = document.getElementById('map-iframe');
             const fallback = document.getElementById('map-fallback');
             
-            // Método 1: Si el iframe no carga contenido en 5 segundos
             let loadTimeout = setTimeout(() => {
-                // Verificar si el iframe tiene contenido real
                 try {
-                    // Si podemos acceder al contentDocument y está vacío, mostrar fallback
                     if (!iframe.contentDocument || iframe.contentDocument.body.innerHTML === '') {
                         fallback.classList.add('visible');
                     }
                 } catch (e) {
-                    // Error de cross-origin = el iframe cargó algo (aunque no podamos leerlo)
-                    // Pero si el src falló completamente, mostrar fallback
-                    if (iframe.src === '' || iframe.src === window.location.origin + '/visor') {
-                        // Intentar verificar si realmente cargó
+                    // Cross-origin = el iframe cargó algo externo
+                    if (iframe.src === '' || iframe.src === 'about:blank') {
                         fallback.classList.add('visible');
                     }
                 }
-            }, 5000);
+            }, 8000);
 
-            // Método 2: Si el iframe dispara error
             iframe.addEventListener('error', () => {
                 clearTimeout(loadTimeout);
                 fallback.classList.add('visible');
             });
 
-            // Método 3: Si el onload se dispara pero el contenido parece vacío
             iframe.addEventListener('load', () => {
                 clearTimeout(loadTimeout);
                 try {
@@ -445,8 +450,7 @@
                         fallback.classList.add('visible');
                     }
                 } catch (e) {
-                    // Cross-origin = el iframe cargó algo externo, está bien
-                    console.log('Mapa cargado desde origen externo (proxy activo)');
+                    // Cross-origin = cargó correctamente
                 }
             });
         }
