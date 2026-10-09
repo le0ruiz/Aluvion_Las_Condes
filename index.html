@@ -3,513 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Análisis de Riesgo y Afectación: Aluvión San Carlos de Apoquindo | R. L. Ruiz</title>
-    <meta name="description" content="Análisis científico y modelación SIG/GEE para la gestión de riesgos por aluviones en Quebrada Honda, Las Condes.">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Análisis de Riesgo: Aluvión San Carlos de Apoquindo | R. L. Ruiz</title>
     <style>
         :root {
-            --bg-body: #f4f6f9; --bg-surface: #ffffff; --bg-code: #f8f9fa;
-            --text-primary: #212529; --text-secondary: #495057; --text-muted: #6c757d;
-            --border: #dee2e6; --accent: #0d47a1; --accent-light: #e3f2fd;
-            --shadow: 0 2px 4px rgba(0,0,0,0.05);
-            --font-serif: Georgia, 'Times New Roman', serif;
-            --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            --font-mono: 'Courier New', Courier, monospace;
+            --bg: #f4f6f9; --surface: #fff; --text: #212529; --accent: #0d47a1;
+            --border: #dee2e6; --shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         [data-theme="dark"] {
-            --bg-body: #121212; --bg-surface: #1e1e1e; --bg-code: #2d2d2d;
-            --text-primary: #e9ecef; --text-secondary: #adb5bd; --text-muted: #868e96;
-            --border: #343a40; --accent: #64b5f6; --accent-light: #1a232e;
-            --shadow: 0 2px 4px rgba(0,0,0,0.3);
+            --bg: #121212; --surface: #1e1e1e; --text: #e9ecef; --accent: #64b5f6;
+            --border: #343a40; --shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: var(--font-sans); background-color: var(--bg-body); color: var(--text-primary); line-height: 1.6; transition: background 0.3s, color 0.3s; }
-
-        .academic-header { background: var(--bg-surface); border-bottom: 3px solid var(--accent); padding: 40px 20px; text-align: center; position: relative; }
-        .academic-header h1 { font-family: var(--font-serif); font-size: 2rem; font-weight: normal; color: var(--text-primary); max-width: 800px; margin: 0 auto 15px; line-height: 1.3; }
-        .authors { font-size: 1.1rem; color: var(--accent); font-weight: bold; margin-bottom: 5px; }
-        .affiliation { font-size: 0.9rem; color: var(--text-muted); font-style: italic; }
-        .theme-toggle { position: absolute; top: 20px; right: 20px; background: var(--bg-body); border: 1px solid var(--border); padding: 8px 12px; border-radius: 20px; cursor: pointer; font-size: 0.9rem; color: var(--text-secondary); }
-
-        .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
-
-        .abstract { background: var(--bg-surface); padding: 25px; border-radius: 8px; box-shadow: var(--shadow); margin-bottom: 30px; border-left: 4px solid var(--accent); }
-        .abstract h2 { font-family: var(--font-serif); font-size: 1.2rem; margin-bottom: 10px; color: var(--accent); }
-        .abstract p { color: var(--text-secondary); font-size: 0.95rem; text-align: justify; }
-
-        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 40px; }
-        .metric-card { background: var(--bg-surface); padding: 20px; border-radius: 8px; box-shadow: var(--shadow); border-top: 3px solid var(--accent); }
-        .metric-card h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 8px; }
-        .metric-card .value { font-size: 1.5rem; font-weight: bold; color: var(--text-primary); }
-        .metric-card .desc { font-size: 0.85rem; color: var(--text-secondary); margin-top: 5px; }
-
-        .section { margin-bottom: 40px; }
-        .section-title { font-family: var(--font-serif); font-size: 1.5rem; color: var(--text-primary); margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
-        .section-subtitle { font-size: 1.1rem; color: var(--accent); margin: 25px 0 15px; font-weight: 600; }
-
-        .figure-container { background: var(--bg-surface); padding: 20px; border-radius: 8px; box-shadow: var(--shadow); margin-bottom: 20px; }
-        .figure-caption { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px; font-style: italic; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
         
-        .map-wrapper { 
-            position: relative; 
-            width: 100%; 
-            min-height: 600px;
-            background: #e9ecef; 
-            border: 1px solid var(--border); 
-            border-radius: 4px; 
-            overflow: hidden; 
-        }
-        .map-wrapper iframe { 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 600px; 
-            border: 0; 
-        }
-        .map-fallback { 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            display: none; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            background: var(--bg-surface); 
+        .header { background: var(--surface); border-bottom: 3px solid var(--accent); padding: 30px 20px; text-align: center; }
+        .header h1 { font-size: 1.8rem; margin-bottom: 10px; }
+        .alert { background: #ffebee; color: #c62828; padding: 15px; border-left: 4px solid #c62828; margin: 20px auto; max-width: 600px; font-weight: bold; }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 30px 0; }
+        .kpi-card { background: var(--surface); padding: 20px; border-radius: 8px; box-shadow: var(--shadow); border-top: 3px solid var(--accent); }
+        .kpi-card h3 { font-size: 0.9rem; color: var(--text); opacity: 0.7; text-transform: uppercase; }
+        .kpi-card .value { font-size: 1.5rem; font-weight: bold; margin: 10px 0; }
+        
+        .map-section { background: var(--surface); padding: 30px; border-radius: 8px; box-shadow: var(--shadow); margin: 30px 0; }
+        .map-container { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px; 
+            padding: 60px 20px; 
             text-align: center; 
-            padding: 30px; 
+            margin: 20px 0;
+            color: white;
         }
-        .map-fallback.visible { display: flex; }
-        .map-fallback p { color: var(--text-secondary); margin-bottom: 15px; max-width: 400px; }
-        .map-fallback .btn-open { 
+        .map-container h3 { font-size: 1.5rem; margin-bottom: 15px; }
+        .map-container p { margin-bottom: 25px; opacity: 0.9; }
+        .btn-map { 
             display: inline-block; 
-            background: var(--accent); 
-            color: white; 
-            padding: 12px 24px; 
-            border-radius: 4px; 
+            background: white; 
+            color: #667eea; 
+            padding: 15px 30px; 
+            border-radius: 6px; 
             text-decoration: none; 
             font-weight: bold; 
-            margin: 5px; 
-            transition: opacity 0.2s;
+            font-size: 1.1rem;
+            margin: 10px;
+            transition: transform 0.2s;
         }
-        .map-fallback .btn-open:hover { opacity: 0.85; }
+        .btn-map:hover { transform: translateY(-2px); }
+        .btn-secondary { background: transparent; border: 2px solid white; color: white; }
         
-        .figure-source { font-size: 0.8rem; color: var(--text-muted); margin-top: 10px; text-align: right; }
-
-        .chart-container { background: var(--bg-surface); padding: 20px; border-radius: 8px; box-shadow: var(--shadow); position: relative; height: 400px; width: 100%; }
-
-        .table-container { overflow-x: auto; background: var(--bg-surface); border-radius: 8px; box-shadow: var(--shadow); margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.88rem; min-width: 1100px; }
-        th { background: var(--bg-body); color: var(--text-secondary); font-weight: 600; text-align: left; padding: 12px 15px; border-bottom: 2px solid var(--border); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.3px; position: sticky; top: 0; }
-        td { padding: 12px 15px; border-bottom: 1px solid var(--border); color: var(--text-primary); vertical-align: top; }
-        tr:last-child td { border-bottom: none; }
-        tr:hover td { background: var(--accent-light); }
-
-        .badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.3px; }
-        .badge-5 { background: #ffebee; color: #b71c1c; border: 1px solid #b71c1c; }
-        .badge-4 { background: #fff3e0; color: #e65100; border: 1px solid #e65100; }
-        .badge-3 { background: #fff8e1; color: #f57f17; border: 1px solid #f57f17; }
-        .badge-2 { background: #e8f5e9; color: #2e7d32; border: 1px solid #2e7d32; }
-        .badge-1 { background: #e0f2f1; color: #1b5e20; border: 1px solid #1b5e20; }
-        [data-theme="dark"] .badge-5 { background: #4a1c1c; color: #ef9a9a; }
-        [data-theme="dark"] .badge-4 { background: #4a2e1c; color: #ffcc80; }
-        [data-theme="dark"] .badge-3 { background: #4a3f1c; color: #ffe082; }
-        [data-theme="dark"] .badge-2 { background: #1c3a1c; color: #a5d6a7; }
-        [data-theme="dark"] .badge-1 { background: #1c3a3a; color: #80cbc4; }
-
-        .coord-cell { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); white-space: nowrap; }
-        .msnm-cell { font-weight: bold; color: var(--accent); }
-
-        .risk-legend { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 20px; padding: 15px; background: var(--bg-surface); border-radius: 8px; box-shadow: var(--shadow); }
-        .risk-legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-secondary); }
-
-        .mitigation-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .mitigation-card { background: var(--bg-surface); padding: 20px; border-radius: 8px; box-shadow: var(--shadow); border-left: 4px solid var(--accent); }
-        .mitigation-card h4 { font-size: 1rem; color: var(--text-primary); margin-bottom: 10px; }
-        .mitigation-card p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; }
-
-        footer { text-align: center; padding: 30px 20px; color: var(--text-muted); font-size: 0.85rem; border-top: 1px solid var(--border); margin-top: 40px; }
-        footer a { color: var(--accent); text-decoration: none; }
-
+        .table-container { overflow-x: auto; background: var(--surface); border-radius: 8px; box-shadow: var(--shadow); margin: 30px 0; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        th { background: var(--bg); padding: 12px; text-align: left; border-bottom: 2px solid var(--border); }
+        td { padding: 12px; border-bottom: 1px solid var(--border); }
+        .badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; }
+        .badge-5 { background: #ffebee; color: #c62828; }
+        .badge-4 { background: #fff3e0; color: #e65100; }
+        .badge-3 { background: #fff8e1; color: #f57f17; }
+        .badge-2 { background: #e8f5e9; color: #2e7d32; }
+        .badge-1 { background: #e0f2f1; color: #1b5e20; }
+        
+        .theme-toggle { position: fixed; top: 20px; right: 20px; background: var(--surface); border: 1px solid var(--border); padding: 10px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; }
+        
         @media (max-width: 768px) {
-            .academic-header h1 { font-size: 1.5rem; }
-            .theme-toggle { top: 10px; right: 10px; padding: 6px 10px; font-size: 0.8rem; }
-            .section-title { font-size: 1.3rem; }
-            .chart-container { height: 300px; }
-            .map-wrapper iframe { height: 400px; }
+            .header h1 { font-size: 1.3rem; }
+            .map-container { padding: 40px 15px; }
+            .btn-map { display: block; margin: 10px auto; }
         }
     </style>
 </head>
 <body>
-
-    <header class="academic-header">
-        <button class="theme-toggle" onclick="toggleTheme()">🌓 Modo Datos</button>
+    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+    
+    <header class="header">
         <h1>Breve análisis de afectación de Aluvión San Carlos de Apoquindo</h1>
-        <p class="authors">Rafael Leonardo Ruiz</p>
-        <p class="affiliation">Modelación SIG/GEE (ALOS AW3D30 / MERIT Hydro) • Sector Quebrada Honda — Las Condes, Chile</p>
+        <p>Desarrollado por <strong>Rafael Leonardo Ruiz</strong> • Sector Quebrada Honda — Las Condes, Chile</p>
     </header>
 
-    <main class="container">
-        
-        <section class="abstract">
-            <h2>Resumen del Análisis</h2>
-            <p>El presente estudio evalúa la vulnerabilidad y afectación potencial ante eventos de flujo aluvial (<em>debris flow</em>) en la subcuenca alta del Mapocho, específicamente en el sector de Quebrada Honda. Mediante el uso de modelos digitales de elevación de alta resolución (ALOS AW3D30) y modelado hidrológico (MERIT Hydro), se identifican 10 nodos de infraestructura crítica georreferenciados, clasificados según nivel de riesgo morfométrico (escala 1–5). Se proponen medidas de mitigación estructural y no estructural para la Gestión Integral del Riesgo de Desastres (GIRD).</p>
-        </section>
+    <div class="container">
+        <div class="alert">🔴 ALERTA ROJA SECTORIAL</div>
 
-        <div class="metrics-grid">
-            <div class="metric-card">
-                <h3>Cuenca de Estudio</h3>
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <h3>Cuenca Principal</h3>
                 <div class="value">Quebrada Honda</div>
-                <div class="desc">Subcuenca Alta Mapocho (2.100 – 850 msnm)</div>
+                <p>Subcuenca Alta Mapocho (2.100 - 850 msnm)</p>
             </div>
-            <div class="metric-card">
-                <h3>Nodos Críticos Evaluados</h3>
+            <div class="kpi-card">
+                <h3>Infraestructura Expuesta</h3>
                 <div class="value">10 Puntos</div>
-                <div class="desc">Salud, Educación, Vialidad y Obras Hidráulicas</div>
+                <p>Salud, Educación, Obras y Vías</p>
             </div>
-            <div class="metric-card">
-                <h3>Rango de Cota Analizada</h3>
-                <div class="value">861 – 1.229 msnm</div>
-                <div class="desc">Desde base valle hasta obras de retención</div>
+            <div class="kpi-card">
+                <h3>Zona de Máxima Amenaza</h3>
+                <div class="value">Cota > 1.000 msnm</div>
+                <p>Flujo aluvial de alta velocidad</p>
             </div>
-            <div class="metric-card">
+            <div class="kpi-card">
                 <h3>Población Flotante Expuesta</h3>
                 <div class="value">~25.000</div>
-                <div class="desc">Universidades, Colegios y Residentes</div>
+                <p>Universidades, Colegios y Residentes</p>
             </div>
         </div>
 
-        <section class="section">
-            <h2 class="section-title">1. Análisis Espacial y Modelación</h2>
-            <div class="figure-container">
-                <p class="figure-caption"><strong>Figura 1:</strong> Visor Cartográfico Interactivo de Amenazas y Puntos Críticos. Publicación en vivo alimentada desde QGIS (<code>puntos_afectados_reales_v2.shp</code>).</p>
-                
-                <div class="map-wrapper">
-                    <!-- IFRAME ACTUALIZADO CON EMBED=TRUE -->
-                    <iframe 
-                        id="map-iframe"
-                        src="https://qgis2onlinemap.com/v/351d29ac?embed=true" 
-                        title="Mapa de Riesgo Quebrada Honda - Aluvión San Carlos de Apoquindo"
-                        allowfullscreen 
-                        loading="lazy"
-                        sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
-                    ></iframe>
-                    
-                    <!-- Fallback por si el iframe falla -->
-                    <div class="map-fallback" id="map-fallback">
-                        <p>️ El visor no pudo cargarse directamente debido a restricciones de seguridad del servidor.</p>
-                        <div>
-                            <a href="https://qgis2onlinemap.com/v/351d29ac" target="_blank" rel="noopener" class="btn-open">
-                                🗺️ Abrir Visor en Pestaña Nueva
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <p class="figure-source">Fuente: Elaboración propia mediante Qgis2OnlineMap. Servidor QGIS Web Activo.</p>
+        <section class="map-section">
+            <h2>🗺️ Visor Cartográfico Interactivo</h2>
+            <p>Publicación en vivo alimentada desde QGIS (<code>puntos_afectados_reales_v2.shp</code>)</p>
+            
+            <div class="map-container">
+                <h3>Mapa de Riesgos - Quebrada Honda</h3>
+                <p>El servidor de mapas requiere visualización en ventana independiente</p>
+                <a href="https://qgis2onlinemap.com/v/9e8e4daa" target="_blank" class="btn-map">
+                    🗺️ Abrir Visor de Mapas
+                </a>
+                <a href="https://qgis2onlinemap.com/v/9e8e4daa" target="_blank" class="btn-map btn-secondary">
+                     Ver Mapa en Pantalla Completa
+                </a>
             </div>
+            
+            <p style="text-align: center; color: var(--text); opacity: 0.7; font-size: 0.9rem;">
+                Servidor QGIS Web Activo • Actualización en tiempo real
+            </p>
         </section>
 
-        <section class="section">
-            <h2 class="section-title">2. Análisis Estadístico de Vulnerabilidad</h2>
-            <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 0.95rem;">Distribución de los puntos críticos según su nivel de riesgo morfométrico y cota de elevación.</p>
-            
-            <div class="figure-container">
-                <p class="figure-caption"><strong>Figura 2:</strong> Correlación entre Nivel de Riesgo (Escala 1-5) y Cota Morfométrica (msnm) por punto crítico.</p>
-                <div class="chart-container">
-                    <canvas id="riskChart"></canvas>
-                </div>
-                <p class="figure-source">Fuente: Análisis de datos de <code>puntos_afectados_reales_v2.shp</code> (R. L. Ruiz, 2024).</p>
-            </div>
-        </section>
-
-        <section class="section">
-            <h2 class="section-title">3. Matriz de Evaluación de Riesgos por Punto Crítico</h2>
-            <p style="color: var(--text-secondary); margin-bottom: 15px; font-size: 0.95rem;">Información georreferenciada, cota morfométrica, categorización de daño y mitigación prioritaria.</p>
-            
-            <div class="risk-legend">
-                <strong style="margin-right: 10px;">Escala de Riesgo:</strong>
-                <div class="risk-legend-item"><span class="badge badge-5">5 Crítico</span></div>
-                <div class="risk-legend-item"><span class="badge badge-4">4 Alto</span></div>
-                <div class="risk-legend-item"><span class="badge badge-3">3 Medio</span></div>
-                <div class="risk-legend-item"><span class="badge badge-2">2 Bajo</span></div>
-                <div class="risk-legend-item"><span class="badge badge-1">1 Muy Bajo</span></div>
-            </div>
-
+        <section>
+            <h2>Matriz de Evaluación de Riesgos</h2>
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Infraestructura / Nodo</th>
-                            <th>Tipo</th>
-                            <th>Coordenadas (Lon, Lat)</th>
-                            <th>Cota</th>
-                            <th>Riesgo</th>
-                            <th>Afectación Proyectada</th>
-                            <th>Medida Operativa Recomendada</th>
+                            <th>ID</th><th>Infraestructura</th><th>Tipo</th><th>Cota</th><th>Riesgo</th><th>Afectación</th><th>Recomendación</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td><strong>Piscinas de Sedimentación Qda. Honda</strong></td>
-                            <td>Obra Hidráulica</td>
-                            <td class="coord-cell">-70.485, -33.394</td>
-                            <td class="msnm-cell">1.229</td>
-                            <td><span class="badge badge-5">5</span></td>
-                            <td>Impacto directo de la marea de detritos; saturación y riesgo de sobrepaso estructural.</td>
-                            <td>Monitoreo de muros y desobstrucción prioritaria de vertederos.</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td><strong>Acceso Parque Natural San Carlos</strong></td>
-                            <td>Precordillera</td>
-                            <td class="coord-cell">-70.492, -33.398</td>
-                            <td class="msnm-cell">1.085</td>
-                            <td><span class="badge badge-5">5</span></td>
-                            <td>Garganta de flujo aluvial activo; desprendimiento masivo de roca y lodo.</td>
-                            <td>Cierre total de accesos a precordillera y evacuación de personal.</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td><strong>Cruce Camino Las Flores / Av. Plaza</strong></td>
-                            <td>Vialidad Crítica</td>
-                            <td class="coord-cell">-70.5085, -33.408</td>
-                            <td class="msnm-cell">908</td>
-                            <td><span class="badge badge-5">5</span></td>
-                            <td>Punto crítico de embalsamiento vial; acumulación severa de rocas, troncos y barro.</td>
-                            <td>Despliegue de maquinaria pesada para despeje de calzada y contención.</td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td><strong>Piedemonte Residencial Cam. El Mazo</strong></td>
-                            <td>Zona Habitacional</td>
-                            <td class="coord-cell">-70.4985, -33.402</td>
-                            <td class="msnm-cell">997</td>
-                            <td><span class="badge badge-4">4</span></td>
-                            <td>Ingreso directo de flujo hiperconcentrado de lodo a deslindes y viviendas.</td>
-                            <td>Instalación de sacos de arena, barreras New Jersey y evacuación preventiva.</td>
-                        </tr>
-                        <tr>
-                            <td>5</td>
-                            <td><strong>Clínica UC Christus San Carlos</strong></td>
-                            <td>Salud / Asistencial</td>
-                            <td class="coord-cell">-70.5035, -33.4075</td>
-                            <td class="msnm-cell">959</td>
-                            <td><span class="badge badge-4">4</span></td>
-                            <td>Anegamiento severo en accesos vehiculares, urgencia y subterráneos.</td>
-                            <td>Activación de bombas de achique, compuertas estancas y desvío de flujo.</td>
-                        </tr>
-                        <tr>
-                            <td>6</td>
-                            <td><strong>Duoc UC Sede San Carlos</strong></td>
-                            <td>Educación Superior</td>
-                            <td class="coord-cell">-70.506, -33.406</td>
-                            <td class="msnm-cell">930</td>
-                            <td><span class="badge badge-3">3</span></td>
-                            <td>Acumulación de lodo en áreas perimetrales y anegamiento de accesos peatonales.</td>
-                            <td>Suspensión de actividades, evacuación guiada y limpieza de colectores.</td>
-                        </tr>
-                        <tr>
-                            <td>7</td>
-                            <td><strong>Universidad de los Andes</strong></td>
-                            <td>Educación Superior</td>
-                            <td class="coord-cell">-70.509, -33.404</td>
-                            <td class="msnm-cell">911</td>
-                            <td><span class="badge badge-3">3</span></td>
-                            <td>Escorrentía concentrada sobre ejes viales internos y accesos por Av. Plaza.</td>
-                            <td>Cierre de accesos precordilleranos y control de tránsito en Av. San Carlos.</td>
-                        </tr>
-                        <tr>
-                            <td>8</td>
-                            <td><strong>Colegio Cumbres</strong></td>
-                            <td>Educación Escolar</td>
-                            <td class="coord-cell">-70.502, -33.412</td>
-                            <td class="msnm-cell">1.022</td>
-                            <td><span class="badge badge-2">2</span></td>
-                            <td>Escorrentía pluvial de ladera con arrastre de finos sobre vías perimetrales.</td>
-                            <td>Inspección de sumideros pluviales y restricción de tránsito interno.</td>
-                        </tr>
-                        <tr>
-                            <td>9</td>
-                            <td><strong>Colegio San Francisco de Asís</strong></td>
-                            <td>Educación Escolar</td>
-                            <td class="coord-cell">-70.513, -33.4055</td>
-                            <td class="msnm-cell">878</td>
-                            <td><span class="badge badge-2">2</span></td>
-                            <td>Anegamiento pluvial secundario en calzadas contiguas por saturación urbana.</td>
-                            <td>Monitoreo preventivo del comportamiento del drenaje de aguas lluvias.</td>
-                        </tr>
-                        <tr>
-                            <td>10</td>
-                            <td><strong>Cruce Av. Las Condes / Av. San Carlos</strong></td>
-                            <td>Nodo Vial Principal</td>
-                            <td class="coord-cell">-70.5175, -33.3995</td>
-                            <td class="msnm-cell">861</td>
-                            <td><span class="badge badge-1">1</span></td>
-                            <td>Anegamiento por acumulación de aguas pluviales en la cota baja del valle.</td>
-                            <td>Gestión del tránsito vehicular y despeje de sumideros pluviales urbanos.</td>
-                        </tr>
+                        <tr><td>1</td><td><strong>Piscinas Sedimentación</strong></td><td>Obra Hidráulica</td><td>1229m</td><td><span class="badge badge-5">5</span></td><td>Impacto directo marea detritos</td><td>Monitoreo de muros</td></tr>
+                        <tr><td>2</td><td><strong>Parque Natural San Carlos</strong></td><td>Garganta Aluvial</td><td>1085m</td><td><span class="badge badge-5">5</span></td><td>Flujo aluvial activo</td><td>Cierre total accesos</td></tr>
+                        <tr><td>3</td><td><strong>Cruce Las Flores/Plaza</strong></td><td>Vialidad Crítica</td><td>908m</td><td><span class="badge badge-5">5</span></td><td>Embalsamiento vial</td><td>Maquinaria pesada</td></tr>
+                        <tr><td>4</td><td><strong>Piedemonte El Mazo</strong></td><td>Zona Habitacional</td><td>997m</td><td><span class="badge badge-4">4</span></td><td>Flujo hiperconcentrado</td><td>Sacos arena + NJ</td></tr>
+                        <tr><td>5</td><td><strong>Clínica UC Christus</strong></td><td>Salud Crítica</td><td>959m</td><td><span class="badge badge-4">4</span></td><td>Anegamiento subterráneos</td><td>Compuertas estancas</td></tr>
+                        <tr><td>6</td><td><strong>Duoc UC San Carlos</strong></td><td>Educación Superior</td><td>930m</td><td><span class="badge badge-3">3</span></td><td>Lodo perimetral</td><td>Suspensión actividades</td></tr>
+                        <tr><td>7</td><td><strong>Universidad de los Andes</strong></td><td>Educación Superior</td><td>911m</td><td><span class="badge badge-3">3</span></td><td>Escorrentía vial</td><td>Control tránsito</td></tr>
+                        <tr><td>8</td><td><strong>Colegio Cumbres</strong></td><td>Educación Escolar</td><td>1022m</td><td><span class="badge badge-2">2</span></td><td>Escorrentía ladera</td><td>Inspección sumideros</td></tr>
+                        <tr><td>9</td><td><strong>Colegio San Francisco</strong></td><td>Educación Escolar</td><td>878m</td><td><span class="badge badge-2">2</span></td><td>Anegamiento secundario</td><td>Monitoreo drenaje</td></tr>
+                        <tr><td>10</td><td><strong>Cruce Las Condes/San Carlos</strong></td><td>Nodo Vial</td><td>861m</td><td><span class="badge badge-1">1</span></td><td>Acumulación pluvial</td><td>Despeje sumideros</td></tr>
                     </tbody>
                 </table>
             </div>
-            <p class="figure-source">Tabla 1: Matriz de evaluación de riesgos por punto crítico. Fuente: Elaboración propia (R. L. Ruiz, 2024).</p>
         </section>
 
-        <section class="section">
-            <h2 class="section-title">4. Estrategias de Gestión y Mitigación</h2>
-            <h3 class="section-subtitle">4.1. Prevención y Mitigación Estructural</h3>
-            <div class="mitigation-grid">
-                <div class="mitigation-card">
-                    <h4>Desobstrucción de Piscinas de Decantación</h4>
-                    <p>Limpieza y vaciado prioritario de las obras de retención en la cota 1.229 msnm de la Quebrada Honda para maximizar la capacidad de amortiguación del flujo.</p>
-                </div>
-                <div class="mitigation-card">
-                    <h4>Defensas Fluviales y Muros New Jersey</h4>
-                    <p>Canalización temporal de escorrentía en Camino Las Flores y Av. Plaza mediante barreras físicas para evitar desbordes hacia recintos asistenciales.</p>
-                </div>
-                <div class="mitigation-card">
-                    <h4>Mantenimiento de Colectores Pluviales</h4>
-                    <p>Inspección continua y preventiva de sumideros y bocatomas en Av. Las Condes y Av. Apoquindo para garantizar la permeabilidad del sistema de drenaje.</p>
-                </div>
-            </div>
-
-            <h3 class="section-subtitle">4.2. Preparación y Alerta Temprana</h3>
-            <div class="mitigation-grid">
-                <div class="mitigation-card">
-                    <h4>Red de Alerta SAE</h4>
-                    <p>Activación de mensajes de evacuación celular (SAE) para el cuadrante precordillerano, gatillada por el sobrepaso de umbrales pluviométricos críticos.</p>
-                </div>
-                <div class="mitigation-card">
-                    <h4>Rutas de Evacuación Seguras</h4>
-                    <p>Planificación de descenso ordenado por Av. Apoquindo hacia el poniente, garantizando la desconexión del eje central de la Quebrada Honda.</p>
-                </div>
-                <div class="mitigation-card">
-                    <h4>Protocolo Especial Clínica UC Christus</h4>
-                    <p>Procedimiento específico que incluye el sellado de compuertas estancas en subterráneos e hiper-vigilancia del flujo en la vía pública adyacente.</p>
-                </div>
-            </div>
+        <section style="background: var(--surface); padding: 30px; border-radius: 8px; margin: 30px 0;">
+            <h2>Estrategias de Gestión</h2>
+            <h3 style="margin: 20px 0 10px; color: var(--accent);">Prevención Estructural</h3>
+            <ul style="margin-left: 20px;">
+                <li><strong>Desobstrucción de Piscinas:</strong> Limpieza cota 1.229 msnm</li>
+                <li><strong>Muros New Jersey:</strong> Canalización en Camino Las Flores</li>
+                <li><strong>Colectores Pluviales:</strong> Inspección Av. Las Condes/Apoquindo</li>
+            </ul>
+            
+            <h3 style="margin: 20px 0 10px; color: var(--accent);">Alerta Temprana</h3>
+            <ul style="margin-left: 20px;">
+                <li><strong>Red SAE:</strong> Mensajes evacuación celular</li>
+                <li><strong>Rutas Evacuación:</strong> Av. Apoquindo hacia poniente</li>
+                <li><strong>Protocolo Clínica UC:</strong> Sellado subterráneos</li>
+            </ul>
         </section>
+    </div>
 
-    </main>
-
-    <footer>
+    <footer style="text-align: center; padding: 30px; color: var(--text); opacity: 0.7; border-top: 1px solid var(--border); margin-top: 40px;">
         <p><strong>Breve análisis de afectación de Aluvión San Carlos de Apoquindo</strong></p>
         <p>Desarrollado por Rafael Leonardo Ruiz • Modelación SIG/GEE (ALOS AW3D30 / MERIT Hydro)</p>
-        <p style="margin-top: 5px;">Visor interactivo vía <a href="https://qgis2onlinemap.com/v/351d29ac" target="_blank" rel="noopener">Qgis2OnlineMap</a></p>
+        <p style="margin-top: 10px;"><a href="https://qgis2onlinemap.com/v/9e8e4daa" target="_blank" style="color: var(--accent);">Visor Qgis2OnlineMap</a></p>
     </footer>
 
     <script>
-        // --- MODO OSCURO ---
         function toggleTheme() {
-            var element = document.body;
-            var currentTheme = element.getAttribute("data-theme");
-            var newTheme = currentTheme === "dark" ? "light" : "dark";
-            element.setAttribute("data-theme", newTheme);
-            localStorage.setItem("theme", newTheme);
-            if (riskChart) { riskChart.destroy(); initChart(newTheme); }
-        }
-
-        document.addEventListener("DOMContentLoaded", function() {
-            var savedTheme = localStorage.getItem("theme") || "light";
-            document.body.setAttribute("data-theme", savedTheme);
-            initChart(savedTheme);
-            setupMapFallback();
-        });
-
-        // --- DETECCIÓN DE FALLA DEL MAPA ---
-        function setupMapFallback() {
-            const iframe = document.getElementById('map-iframe');
-            const fallback = document.getElementById('map-fallback');
-            
-            let loadTimeout = setTimeout(() => {
-                try {
-                    if (!iframe.contentDocument || iframe.contentDocument.body.innerHTML === '') {
-                        fallback.classList.add('visible');
-                    }
-                } catch (e) {
-                    // Cross-origin = el iframe cargó algo externo
-                    if (iframe.src === '' || iframe.src === 'about:blank') {
-                        fallback.classList.add('visible');
-                    }
-                }
-            }, 8000);
-
-            iframe.addEventListener('error', () => {
-                clearTimeout(loadTimeout);
-                fallback.classList.add('visible');
-            });
-
-            iframe.addEventListener('load', () => {
-                clearTimeout(loadTimeout);
-                try {
-                    const doc = iframe.contentDocument;
-                    if (doc && doc.body && doc.body.innerHTML.trim() === '') {
-                        fallback.classList.add('visible');
-                    }
-                } catch (e) {
-                    // Cross-origin = cargó correctamente
-                }
-            });
-        }
-
-        // --- GRÁFICO CIENTÍFICO ---
-        let riskChart;
-        function initChart(theme) {
-            const ctx = document.getElementById('riskChart').getContext('2d');
-            const isDark = theme === 'dark';
-            const textColor = isDark ? '#adb5bd' : '#495057';
-            const gridColor = isDark ? '#343a40' : '#dee2e6';
-
-            const labels = ['1. Piscinas Sed.', '2. Parque Nat.', '3. C. Las Flores', '4. Cam. El Mazo', '5. Clínica UC', '6. Duoc UC', '7. U. Andes', '8. Col. Cumbres', '9. Col. S. Asís', '10. C. Las Condes'];
-            const riskData = [5, 5, 5, 4, 4, 3, 3, 2, 2, 1];
-            const msnmData = [1229, 1085, 908, 997, 959, 930, 911, 1022, 878, 861];
-
-            riskChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        {
-                            type: 'line',
-                            label: 'Cota (msnm)',
-                            data: msnmData,
-                            borderColor: '#0d47a1',
-                            backgroundColor: 'rgba(13, 71, 161, 0.1)',
-                            yAxisID: 'y1',
-                            tension: 0.3,
-                            pointRadius: 4,
-                            pointBackgroundColor: '#0d47a1'
-                        },
-                        {
-                            type: 'bar',
-                            label: 'Nivel de Riesgo (1-5)',
-                            data: riskData,
-                            backgroundColor: riskData.map(v => {
-                                if(v===5) return '#b71c1c'; if(v===4) return '#e65100'; if(v===3) return '#f57f17'; if(v===2) return '#2e7d32'; return '#1b5e20';
-                            }),
-                            yAxisID: 'y',
-                            borderRadius: 4
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: { mode: 'index', intersect: false },
-                    plugins: {
-                        legend: { labels: { color: textColor } },
-                        tooltip: { backgroundColor: isDark ? '#1e1e1e' : '#ffffff', titleColor: textColor, bodyColor: textColor, borderColor: gridColor, borderWidth: 1 }
-                    },
-                    scales: {
-                        x: { ticks: { color: textColor, maxRotation: 45, minRotation: 45, font: {size: 10} }, grid: { color: gridColor } },
-                        y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Nivel de Riesgo', color: textColor }, min: 0, max: 6, ticks: { color: textColor, stepSize: 1 }, grid: { color: gridColor } },
-                        y1: { type: 'linear', display: true, position: 'right', title: { display: true, text: 'Cota (msnm)', color: '#0d47a1' }, min: 800, max: 1300, ticks: { color: '#0d47a1' }, grid: { drawOnChartArea: false } }
-                    }
-                }
-            });
+            const body = document.body;
+            const current = body.getAttribute('data-theme');
+            body.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
         }
     </script>
 </body>
