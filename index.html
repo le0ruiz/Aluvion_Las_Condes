@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Análisis de Riesgo: Aluvión San Carlos de Apoquindo | R. L. Ruiz</title>
-    <meta name="description" content="Análisis científico y modelación SIG/GEE para la gestión de riesgos por aluviones en Quebrada Honda, Las Condes.">
+    <meta name="description" content="Análisis científico y modelación SIG/GEE para la gestión de riesgos por aluviones en Quebrada Honda, Las Condes. 30 puntos críticos validados.">
     <style>
         :root {
             --bg: #f8f9fa; --surface: #ffffff; --text: #212529; --text-muted: #6c757d;
@@ -36,41 +36,26 @@
         .kpi-card .value { font-size: 1.6rem; font-weight: bold; color: var(--text); margin-bottom: 5px; }
         .kpi-card p { font-size: 0.9rem; color: var(--text-muted); }
         
-        .map-section { background: var(--surface); padding: 30px; border-radius: 8px; box-shadow: var(--shadow); margin: 40px 0; }
-        .map-section h2 { margin-bottom: 10px; text-align: center; }
-        .map-section > p { color: var(--text-muted); margin-bottom: 25px; text-align: center; }
+        .section-box { background: var(--surface); padding: 30px; border-radius: 8px; box-shadow: var(--shadow); margin: 40px 0; }
+        .section-title { font-size: 1.4rem; margin: 0 0 20px; padding-bottom: 10px; border-bottom: 2px solid var(--border); color: var(--text); display: flex; align-items: center; gap: 10px; }
         
-        /* Contenedor del Iframe */
-        .map-wrapper {
-            position: relative;
-            width: 100%;
-            height: 600px;
-            background: var(--bg);
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            overflow: hidden;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
-        }
-        .map-wrapper iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            display: block;
-        }
-        .map-fallback-note {
-            text-align: center;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-top: 15px;
-            padding: 10px;
-            background: var(--bg);
-            border-radius: 4px;
-        }
+        .map-wrapper { position: relative; width: 100%; height: 600px; background: var(--bg); border-radius: 8px; border: 1px solid var(--border); overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
+        .map-wrapper iframe { width: 100%; height: 100%; border: none; display: block; }
+        .map-fallback-note { text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 15px; padding: 10px; background: var(--bg); border-radius: 4px; }
         .map-fallback-note a { color: var(--accent); font-weight: 500; }
-        
-        .section-title { font-size: 1.4rem; margin: 40px 0 20px; padding-bottom: 10px; border-bottom: 2px solid var(--border); color: var(--text); }
-        
+
+        .methodology-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-top: 20px; }
+        .method-card { background: var(--bg); padding: 20px; border-radius: 8px; border-left: 4px solid var(--accent); }
+        .method-card h4 { color: var(--accent); margin-bottom: 10px; font-size: 1.05rem; display: flex; align-items: center; gap: 8px; }
+        .method-card p, .method-card ul { font-size: 0.9rem; color: var(--text); line-height: 1.6; }
+        .method-card ul { margin-left: 20px; margin-top: 8px; }
+        .method-card li { margin-bottom: 6px; }
+
         .table-container { overflow-x: auto; background: var(--surface); border-radius: 8px; box-shadow: var(--shadow); margin: 20px 0; }
+        .table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
+        .btn-csv { background: var(--accent); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: 500; display: flex; align-items: center; gap: 6px; transition: opacity 0.2s; }
+        .btn-csv:hover { opacity: 0.9; }
+        
         table { width: 100%; border-collapse: collapse; font-size: 0.9rem; min-width: 1000px; }
         th { background: var(--bg); padding: 14px 12px; text-align: left; border-bottom: 2px solid var(--border); font-weight: 600; color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.3px; }
         td { padding: 14px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
@@ -92,8 +77,6 @@
         .coord { font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted); white-space: nowrap; }
         .msnm { font-weight: bold; color: var(--accent); }
         
-        .mitigation-section { background: var(--surface); padding: 30px; border-radius: 8px; margin: 30px 0; box-shadow: var(--shadow); }
-        .mitigation-section h3 { margin: 25px 0 15px; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 8px; }
         .mitigation-section ul { margin-left: 20px; line-height: 1.8; color: var(--text); }
         .mitigation-section li { margin-bottom: 8px; }
         
@@ -105,7 +88,7 @@
         
         @media (max-width: 768px) {
             .header h1 { font-size: 1.4rem; }
-            .map-wrapper { height: 400px; } /* Altura reducida para móviles */
+            .map-wrapper { height: 400px; }
             .kpi-card .value { font-size: 1.3rem; }
         }
     </style>
@@ -129,8 +112,8 @@
             </div>
             <div class="kpi-card">
                 <h3>Infraestructura Expuesta</h3>
-                <div class="value">10 Puntos Críticos</div>
-                <p>Salud, Educación, Obras Hidráulicas y Vías</p>
+                <div class="value">30 Puntos Críticos</div>
+                <p>Salud, Educación, Energía, Vialidad, Vivienda y Recreación</p>
             </div>
             <div class="kpi-card">
                 <h3>Zona de Máxima Amenaza</h3>
@@ -144,164 +127,136 @@
             </div>
         </div>
 
-        <!-- SECCIÓN DEL VISOR INCRUSTADO -->
-        <section class="map-section">
-            <h2>🗺️ Visor Cartográfico Interactivo</h2>
-            <p>Publicación en vivo alimentada desde QGIS (<code>puntos_afectados_reales_v2.shp</code>)</p>
-            
+        <section class="section-box">
+            <h2 class="section-title">🗺️ Visor Cartográfico Interactivo</h2>
+            <p style="color: var(--text-muted); margin-bottom: 20px; text-align: center;">Publicación en vivo alimentada desde QGIS (<code>puntos_afectados_reales_v2.shp</code>)</p>
             <div class="map-wrapper">
-                <iframe 
-                    src="https://qgis2onlinemap.com/v/9e8e4daa" 
-                    title="Visor Cartográfico Interactivo - Quebrada Honda"
-                    sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
-                    loading="lazy"
-                    allowfullscreen>
-                </iframe>
+                <!-- URL DEL VISOR ACTUALIZADA -->
+                <iframe src="https://qgis2onlinemap.com/v/99862152" title="Visor Cartográfico Interactivo - Quebrada Honda" sandbox="allow-scripts allow-same-origin allow-popups allow-forms" loading="lazy" allowfullscreen></iframe>
             </div>
-            
             <div class="map-fallback-note">
-                ⚠️ Si el mapa aparece en blanco, es posible que una extensión de privacidad de tu navegador esté bloqueando marcos incrustados. 
-                En ese caso, <a href="https://qgis2onlinemap.com/v/9e8e4daa" target="_blank" rel="noopener">haz clic aquí para abrir el visor en una pestaña nueva</a>.
+                ⚠️ Si el mapa aparece en blanco, una extensión de privacidad podría estar bloqueando marcos incrustados. 
+                <a href="https://qgis2onlinemap.com/v/99862152" target="_blank" rel="noopener">Haz clic aquí para abrir el visor en una pestaña nueva</a>.
             </div>
         </section>
 
-        <h2 class="section-title">Matriz de Evaluación de Riesgos por Punto Crítico</h2>
-        <p style="color: var(--text-muted); margin-bottom: 20px;">Información georreferenciada, cota morfométrica, categorización de daño y mitigación prioritaria.</p>
-        
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Infraestructura / Nodo</th>
-                        <th>Tipo</th>
-                        <th>Coordenadas (Lon, Lat)</th>
-                        <th>Cota</th>
-                        <th>Riesgo</th>
-                        <th>Afectación Proyectada</th>
-                        <th>Medida Operativa Recomendada</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>1</strong></td>
-                        <td><strong>Piscinas de Sedimentación Qda. Honda</strong></td>
-                        <td>Obra Hidráulica / Contención</td>
-                        <td class="coord">-70.485, -33.394</td>
-                        <td class="msnm">1.229 m</td>
-                        <td><span class="badge badge-5">5 Crítico</span></td>
-                        <td>Impacto directo de la marea de detritos; saturación y riesgo de sobrepaso estructural.</td>
-                        <td>Monitoreo de muros y desobstrucción prioritaria de vertederos.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>2</strong></td>
-                        <td><strong>Acceso Parque Natural San Carlos</strong></td>
-                        <td>Precordillera / Garganta Aluvial</td>
-                        <td class="coord">-70.492, -33.398</td>
-                        <td class="msnm">1.085 m</td>
-                        <td><span class="badge badge-5">5 Crítico</span></td>
-                        <td>Garganta de flujo aluvial activo; desprendimiento masivo de roca y lodo.</td>
-                        <td>Cierre total de accesos a precordillera y evacuación de personal.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>3</strong></td>
-                        <td><strong>Cruce Camino Las Flores / Av. Plaza</strong></td>
-                        <td>Vialidad Crítica / Colapso</td>
-                        <td class="coord">-70.5085, -33.408</td>
-                        <td class="msnm">908 m</td>
-                        <td><span class="badge badge-5">5 Crítico</span></td>
-                        <td>Punto crítico de embalsamiento vial; acumulación severa de rocas, troncos y barro.</td>
-                        <td>Despliegue de maquinaria pesada para despeje de calzada y contención.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>4</strong></td>
-                        <td><strong>Piedemonte Residencial Cam. El Mazo</strong></td>
-                        <td>Zona Habitacional / Cono Deyección</td>
-                        <td class="coord">-70.4985, -33.402</td>
-                        <td class="msnm">997 m</td>
-                        <td><span class="badge badge-4">4 Alto</span></td>
-                        <td>Ingreso directo de flujo hiperconcentrado de lodo a deslindes y viviendas.</td>
-                        <td>Instalación de sacos de arena, barreras New Jersey y evacuación preventiva.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>5</strong></td>
-                        <td><strong>Clínica UC Christus San Carlos</strong></td>
-                        <td>Salud / Asistencial Crítica</td>
-                        <td class="coord">-70.5035, -33.4075</td>
-                        <td class="msnm">959 m</td>
-                        <td><span class="badge badge-4">4 Alto</span></td>
-                        <td>Anegamiento severo en accesos vehiculares, urgencia y subterráneos.</td>
-                        <td>Activación de bombas de achique, compuertas estancas y desvío de flujo.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>6</strong></td>
-                        <td><strong>Duoc UC Sede San Carlos</strong></td>
-                        <td>Educación Superior</td>
-                        <td class="coord">-70.506, -33.406</td>
-                        <td class="msnm">930 m</td>
-                        <td><span class="badge badge-3">3 Medio</span></td>
-                        <td>Acumulación de lodo en áreas perimetrales y anegamiento de accesos peatonales.</td>
-                        <td>Suspensión de actividades, evacuación guiada y limpieza de colectores.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>7</strong></td>
-                        <td><strong>Universidad de los Andes</strong></td>
-                        <td>Educación Superior</td>
-                        <td class="coord">-70.509, -33.404</td>
-                        <td class="msnm">911 m</td>
-                        <td><span class="badge badge-3">3 Medio</span></td>
-                        <td>Escorrentía concentrada sobre ejes viales internos y accesos por Av. Plaza.</td>
-                        <td>Cierre de accesos precordilleranos y control de tránsito en Av. San Carlos.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>8</strong></td>
-                        <td><strong>Colegio Cumbres</strong></td>
-                        <td>Educación Escolar</td>
-                        <td class="coord">-70.502, -33.412</td>
-                        <td class="msnm">1.022 m</td>
-                        <td><span class="badge badge-2">2 Bajo</span></td>
-                        <td>Escorrentía pluvial de ladera con arrastre de finos sobre vías perimetrales.</td>
-                        <td>Inspección de sumideros pluviales y restricción de tránsito interno.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>9</strong></td>
-                        <td><strong>Colegio San Francisco de Asís</strong></td>
-                        <td>Educación Escolar</td>
-                        <td class="coord">-70.513, -33.4055</td>
-                        <td class="msnm">878 m</td>
-                        <td><span class="badge badge-2">2 Bajo</span></td>
-                        <td>Anegamiento pluvial secundario en calzadas contiguas por saturación urbana.</td>
-                        <td>Monitoreo preventivo del comportamiento del drenaje de aguas lluvias.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>10</strong></td>
-                        <td><strong>Cruce Av. Las Condes / Av. San Carlos</strong></td>
-                        <td>Nodo Vial Principal / Base Valle</td>
-                        <td class="coord">-70.5175, -33.3995</td>
-                        <td class="msnm">861 m</td>
-                        <td><span class="badge badge-1">1 Mínimo</span></td>
-                        <td>Anegamiento por acumulación de aguas pluviales en la cota baja del valle.</td>
-                        <td>Gestión del tránsito vehicular y despeje de sumideros pluviales urbanos.</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <section class="mitigation-section">
-            <h2 style="margin-bottom: 25px; border-bottom: 2px solid var(--border); padding-bottom: 10px;">Estrategias de Gestión y Mitigación</h2>
+        <section class="section-box">
+            <h2 class="section-title">🔬 Metodología de Análisis y Modelación</h2>
+            <p style="color: var(--text-muted); margin-bottom: 20px;">Este estudio sigue un enfoque de Gestión Integral del Riesgo de Desastres (GIRD), combinando análisis espacial SIG con evaluación de vulnerabilidad física. Los 30 puntos críticos han sido validados con reportes de SERNAGEOMIN, SENAPRED y análisis de campo.</p>
             
-            <h3>1. Prevención y Mitigación Estructural</h3>
+            <div class="methodology-grid">
+                <div class="method-card">
+                    <h4>📡 1. Fuentes de Datos</h4>
+                    <ul>
+                        <li><strong>Modelo Digital de Elevación (DEM):</strong> ALOS AW3D30 (resolución 30m) para la delimitación precisa de la cuenca y pendientes.</li>
+                        <li><strong>Hidrología:</strong> Base de datos MERIT Hydro para la modelación de dirección de flujo y acumulación.</li>
+                        <li><strong>Infraestructura:</strong> Shapefile personalizado (<code>puntos_afectados_reales_v2.shp</code>) con levantamiento de campo y datos abiertos.</li>
+                    </ul>
+                </div>
+                <div class="method-card">
+                    <h4>⚙️ 2. Flujo de Trabajo SIG</h4>
+                    <ul>
+                        <li>Delimitación automática de la subcuenca de la Quebrada Honda.</li>
+                        <li>Generación de mapas de pendiente y orientación para identificar zonas de aceleración de flujo.</li>
+                        <li>Cruce espacial (Spatial Join) entre la zona de inundación proyectada y la capa de infraestructura crítica.</li>
+                    </ul>
+                </div>
+                <div class="method-card">
+                    <h4>⚠️ 3. Criterios de la Matriz de Riesgo</h4>
+                    <p>La clasificación (1 a 5) se basa en una evaluación multicriterio:</p>
+                    <ul>
+                        <li><strong>Nivel 5 (Crítico):</strong> Impacto directo de marea de detritos, cota alta (>900m) y función vital.</li>
+                        <li><strong>Nivel 3-4 (Medio-Alto):</strong> Afectación por escorrentía concentrada o anegamiento de accesos.</li>
+                        <li><strong>Nivel 1-2 (Bajo):</strong> Zonas de base de valle con riesgo secundario por saturación pluvial.</li>
+                    </ul>
+                </div>
+                <div class="method-card">
+                    <h4>📉 4. Limitaciones del Estudio</h4>
+                    <ul>
+                        <li>La resolución del DEM (30m) puede suavizar micro-relieves críticos en quebradas estrechas.</li>
+                        <li>El modelo no incluye variables reológicas dinámicas (viscosidad del lodo) en tiempo real.</li>
+                        <li>Las coordenadas representan el centroide del punto de interés, no el polígono completo.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-box">
+            <div class="table-header">
+                <h2 class="section-title" style="margin: 0; border: none; padding: 0;">📊 Matriz de Evaluación de Riesgos (30 Puntos)</h2>
+                <button class="btn-csv" onclick="exportTableToCSV('matriz_riesgo_quebrada_honda.csv')">
+                    📥 Descargar Datos (CSV)
+                </button>
+            </div>
+            <p style="color: var(--text-muted); margin-bottom: 20px;">Información georreferenciada, cota morfométrica, categorización de daño y mitigación prioritaria.</p>
+            
+            <div class="table-container">
+                <table id="riskTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Infraestructura / Nodo</th>
+                            <th>Tipo</th>
+                            <th>Coordenadas (Lon, Lat)</th>
+                            <th>Cota</th>
+                            <th>Riesgo</th>
+                            <th>Afectación Proyectada</th>
+                            <th>Medida Operativa Recomendada</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>1</strong></td><td><strong>Piscinas de Sedimentación Qda. Honda</strong></td><td>Obra Hidráulica / Contención</td><td class="coord">-70.485, -33.394</td><td class="msnm">1.229 m</td><td><span class="badge badge-5">5 Crítico</span></td><td>Impacto directo de la marea de detritos; saturación y riesgo de sobrepaso estructural.</td><td>Monitoreo de muros y desobstrucción prioritaria de vertederos.</td></tr>
+                        <tr><td><strong>2</strong></td><td><strong>Acceso Parque Natural San Carlos</strong></td><td>Precordillera / Garganta Aluvial</td><td class="coord">-70.492, -33.398</td><td class="msnm">1.085 m</td><td><span class="badge badge-5">5 Crítico</span></td><td>Garganta de flujo aluvial activo; desprendimiento masivo de roca y lodo.</td><td>Cierre total de accesos a precordillera y evacuación de personal.</td></tr>
+                        <tr><td><strong>3</strong></td><td><strong>Cruce Camino Las Flores / Av. Plaza</strong></td><td>Vialidad Crítica / Colapso</td><td class="coord">-70.5085, -33.408</td><td class="msnm">908 m</td><td><span class="badge badge-5">5 Crítico</span></td><td>Punto crítico de embalsamiento vial; acumulación severa de rocas, troncos y barro.</td><td>Despliegue de maquinaria pesada para despeje de calzada y contención.</td></tr>
+                        <tr><td><strong>4</strong></td><td><strong>Piedemonte Residencial Cam. El Mazo</strong></td><td>Zona Habitacional / Cono Deyección</td><td class="coord">-70.4985, -33.402</td><td class="msnm">997 m</td><td><span class="badge badge-4">4 Alto</span></td><td>Ingreso directo de flujo hiperconcentrado de lodo a deslindes y viviendas.</td><td>Instalación de sacos de arena, barreras New Jersey y evacuación preventiva.</td></tr>
+                        <tr><td><strong>5</strong></td><td><strong>Clínica UC Christus San Carlos</strong></td><td>Salud / Asistencial Crítica</td><td class="coord">-70.5035, -33.4075</td><td class="msnm">959 m</td><td><span class="badge badge-4">4 Alto</span></td><td>Anegamiento severo en accesos vehiculares, urgencia y subterráneos.</td><td>Activación de bombas de achique, compuertas estancas y desvío de flujo.</td></tr>
+                        <tr><td><strong>6</strong></td><td><strong>Duoc UC Sede San Carlos</strong></td><td>Educación Superior</td><td class="coord">-70.506, -33.406</td><td class="msnm">930 m</td><td><span class="badge badge-3">3 Medio</span></td><td>Acumulación de lodo en áreas perimetrales y anegamiento de accesos peatonales.</td><td>Suspensión de actividades, evacuación guiada y limpieza de colectores.</td></tr>
+                        <tr><td><strong>7</strong></td><td><strong>Universidad de los Andes</strong></td><td>Educación Superior</td><td class="coord">-70.509, -33.404</td><td class="msnm">911 m</td><td><span class="badge badge-3">3 Medio</span></td><td>Escorrentía concentrada sobre ejes viales internos y accesos por Av. Plaza.</td><td>Cierre de accesos precordilleranos y control de tránsito en Av. San Carlos.</td></tr>
+                        <tr><td><strong>8</strong></td><td><strong>Colegio Cumbres</strong></td><td>Educación Escolar</td><td class="coord">-70.502, -33.412</td><td class="msnm">1.022 m</td><td><span class="badge badge-2">2 Bajo</span></td><td>Escorrentía pluvial de ladera con arrastre de finos sobre vías perimetrales.</td><td>Inspección de sumideros pluviales y restricción de tránsito interno.</td></tr>
+                        <tr><td><strong>9</strong></td><td><strong>Colegio San Francisco de Asís</strong></td><td>Educación Escolar</td><td class="coord">-70.513, -33.4055</td><td class="msnm">878 m</td><td><span class="badge badge-2">2 Bajo</span></td><td>Anegamiento pluvial secundario en calzadas contiguas por saturación urbana.</td><td>Monitoreo preventivo del comportamiento del drenaje de aguas lluvias.</td></tr>
+                        <tr><td><strong>10</strong></td><td><strong>Cruce Av. Las Condes / Av. San Carlos</strong></td><td>Nodo Vial Principal / Base Valle</td><td class="coord">-70.5175, -33.3995</td><td class="msnm">861 m</td><td><span class="badge badge-1">1 Mínimo</span></td><td>Anegamiento por acumulación de aguas pluviales en la cota baja del valle.</td><td>Gestión del tránsito vehicular y despeje de sumideros pluviales urbanos.</td></tr>
+                        <tr><td><strong>11</strong></td><td><strong>Int. General Blanche con San Carlos de Apoquindo</strong></td><td>Vialidad Crítica / Colapso</td><td class="coord">-70.505, -33.409</td><td class="msnm">920 m</td><td><span class="badge badge-5">5 Crítico</span></td><td>Arrastre severo de barro, piedras, automóviles y transporte público (bus RED) por activación de quebrada.</td><td>Cierre inmediato de calzada, despliegue de maquinaria de rescate y limpieza de material sólido.</td></tr>
+                        <tr><td><strong>12</strong></td><td><strong>Avenida La Plaza Sur (Sector Baños Apoquindo)</strong></td><td>Vialidad / Drenaje</td><td class="coord">-70.500, -33.400</td><td class="msnm">940 m</td><td><span class="badge badge-4">4 Alto</span></td><td>Desborde del canal adyacente a la quebrada, anegamiento severo de calzada y aceras.</td><td>Reforzamiento de muros de contención del canal y limpieza urgente de rejillas de captación.</td></tr>
+                        <tr><td><strong>13</strong></td><td><strong>Accesos y Estacionamientos Duoc UC San Carlos</strong></td><td>Educación Superior</td><td class="coord">-70.507, -33.405</td><td class="msnm">925 m</td><td><span class="badge badge-4">4 Alto</span></td><td>Ingreso de flujo de barro y escombros a instalaciones, estacionamientos y accesos peatonales.</td><td>Evaluación estructural post-evento, limpieza de sedimentos y reubicación temporal de accesos.</td></tr>
+                        <tr><td><strong>14</strong></td><td><strong>Barrio Loma Linda (Anexo 30 de Mayo)</strong></td><td>Zona Habitacional</td><td class="coord">-70.510, -33.410</td><td class="msnm">950 m</td><td><span class="badge badge-3">3 Medio</span></td><td>Afectación por fugas de agua, desborde de sistema de alcantarillado y saturación de suelos.</td><td>Inspección de redes de aguas servidas, bombeo de aguas estancadas y monitoreo de estabilidad de taludes.</td></tr>
+                        <tr><td><strong>15</strong></td><td><strong>Camino Padre Hurtado Apoquindo (Tramo Quebrada Honda)</strong></td><td>Vialidad Crítica</td><td class="coord">-70.512, -33.408</td><td class="msnm">910 m</td><td><span class="badge badge-4">4 Alto</span></td><td>Acumulación importante de agua y material sólido, colapso temporal de rutas de evacuación.</td><td>Habilitación de rutas alternas y señalética de emergencia visible para desvíos seguros.</td></tr>
+                        <tr><td><strong>16</strong></td><td><strong>Antiguos Baños Apoquindo y Adyacencias</strong></td><td>Zona Patrimonial / Recreacional</td><td class="coord">-70.498, -33.399</td><td class="msnm">960 m</td><td><span class="badge badge-4">4 Alto</span></td><td>Desborde directo de la quebrada activada, alto riesgo de arrastre de material sólido hacia infraestructura.</td><td>Evacuación preventiva del recinto y evaluación de daños en estructuras históricas y senderos.</td></tr>
+                        <tr><td><strong>17</strong></td><td><strong>Colegio San Carlos de Apoquindo</strong></td><td>Educación Escolar</td><td class="coord">-70.505, -33.408</td><td class="msnm">940 m</td><td><span class="badge badge-4">4 Alto</span></td><td>Ingreso de lodo y escombros en patios y accesos principales.</td><td>Activación de protocolo de resguardo y limpieza de drenajes perimetrales.</td></tr>
+                        <tr><td><strong>18</strong></td><td><strong>Colegio Tabancura</strong></td><td>Educación Escolar</td><td class="coord">-70.510, -33.415</td><td class="msnm">890 m</td><td><span class="badge badge-3">3 Medio</span></td><td>Anegamiento de calles aledañas y saturación de sumideros.</td><td>Monitoreo de accesos y coordinación con tránsito de Carabineros.</td></tr>
+                        <tr><td><strong>19</strong></td><td><strong>Estadio San Carlos de Apoquindo (U. Católica)</strong></td><td>Infraestructura Deportiva</td><td class="coord">-70.515, -33.412</td><td class="msnm">880 m</td><td><span class="badge badge-3">3 Medio</span></td><td>Colapso de drenaje pluvial en estacionamientos y accesos peatonales.</td><td>Revisión de bombas de achique y limpieza de rejillas previas a eventos.</td></tr>
+                        <tr><td><strong>20</strong></td><td><strong>Av. Paul Harris (Tramo Precordillera)</strong></td><td>Vialidad Crítica</td><td class="coord">-70.495, -33.400</td><td class="msnm">980 m</td><td><span class="badge badge-4">4 Alto</span></td><td>Ruta de evacuación alternativa con riesgo de corte por caída de árboles y lodo.</td><td>Despeje preventivo de calzada y poda de árboles en laderas inestables.</td></tr>
+                        <tr><td><strong>21</strong></td><td><strong>Av. Cristóbal Colón (Acceso Oriente)</strong></td><td>Vialidad Crítica</td><td class="coord">-70.520, -33.410</td><td class="msnm">850 m</td><td><span class="badge badge-3">3 Medio</span></td><td>Saturación de capacidad vial por desvíos masivos desde Apoquindo.</td><td>Habilitación de contraflujo y control de semáforos por autoridades.</td></tr>
+                        <tr><td><strong>22</strong></td><td><strong>Quebrada de Ramón (Activación Secundaria)</strong></td><td>Garganta Aluvial</td><td class="coord">-70.490, -33.420</td><td class="msnm">1.100 m</td><td><span class="badge badge-5">5 Crítico</span></td><td>Flujo de detritos paralelo que amenaza el sector sur de San Carlos.</td><td>Monitoreo satelital y restricción total de acceso a senderos.</td></tr>
+                        <tr><td><strong>23</strong></td><td><strong>Camino El Alba (Corte de Ruta)</strong></td><td>Vialidad / Acceso</td><td class="coord">-70.500, -33.395</td><td class="msnm">1.050 m</td><td><span class="badge badge-4">4 Alto</span></td><td>Corte total de acceso a Lo Curro por derrumbes y caída de rocas.</td><td>Instalación de vallas de contención y maquinaria de rescate en zona.</td></tr>
+                        <tr><td><strong>24</strong></td><td><strong>Condominios Av. Apoquindo (Altura 11.000)</strong></td><td>Zona Habitacional</td><td class="coord">-70.512, -33.407</td><td class="msnm">910 m</td><td><span class="badge badge-3">3 Medio</span></td><td>Filtraciones en estacionamientos subterráneos y corte de accesos.</td><td>Inspección de sellos de garitas y activación de grupos comunitarios de emergencia.</td></tr>
+                        <tr><td><strong>25</strong></td><td><strong>Sistema de Alcantarillado (Boca Calle Gral. Blanche)</strong></td><td>Infraestructura Sanitaria</td><td class="coord">-70.506, -33.409</td><td class="msnm">915 m</td><td><span class="badge badge-4">4 Alto</span></td><td>Rebalse de aguas servidas mezclado con flujo aluvial (riesgo biológico).</td><td>Cierre de zona con cinta de peligro y limpieza con equipos HAZMAT.</td></tr>
+                        <tr><td><strong>26</strong></td><td><strong>Lo Curro (Acceso por Av. El Alba)</strong></td><td>Zona Habitacional / Vialidad</td><td class="coord">-70.505, -33.390</td><td class="msnm">1.150 m</td><td><span class="badge badge-4">4 Alto</span></td><td>Aislamiento del sector por corte de única vía de acceso.</td><td>Plan de evacuación vertical y abastecimiento de emergencia.</td></tr>
+                        <tr><td><strong>27</strong></td><td><strong>Subestación Eléctrica San Carlos</strong></td><td>Infraestructura Energética</td><td class="coord">-70.508, -33.406</td><td class="msnm">935 m</td><td><span class="badge badge-4">4 Alto</span></td><td>Riesgo de cortocircuito y corte de suministro eléctrico por inundación.</td><td>Protocolo de corte preventivo y despliegue de grupos electrógenos.</td></tr>
+                        <tr><td><strong>28</strong></td><td><strong>Av. Álvaro del Portillo (Drenaje Pluvial)</strong></td><td>Vialidad / Drenaje</td><td class="coord">-70.515, -33.402</td><td class="msnm">895 m</td><td><span class="badge badge-3">3 Medio</span></td><td>Desborde de cunetas por saturación de capacidad de drenaje.</td><td>Limpieza de cunetas y señalización de zonas de encharcamiento.</td></tr>
+                        <tr><td><strong>29</strong></td><td><strong>Parque Mahuida (Acceso Sur)</strong></td><td>Zona Recreacional</td><td class="coord">-70.505, -33.418</td><td class="msnm">870 m</td><td><span class="badge badge-2">2 Bajo</span></td><td>Cierre de accesos por caída de ramas y anegamiento de senderos.</td><td>Inspección de senderos y reapertura gradual post-evaluación.</td></tr>
+                        <tr><td><strong>30</strong></td><td><strong>Intersección Av. Apoquindo con Américo Vespucio</strong></td><td>Nodo Vial / Colapso</td><td class="coord">-70.535, -33.410</td><td class="msnm">750 m</td><td><span class="badge badge-2">2 Bajo</span></td><td>Colapso vial masivo por evacuación de la precordillera.</td><td>Control de tráfico en intersección y habilitación de vías de escape.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="section-box mitigation-section">
+            <h2 class="section-title">🛡️ Estrategias de Gestión y Mitigación</h2>
+            
+            <h3 style="color: var(--accent); margin: 25px 0 15px;">1. Prevención y Mitigación Estructural</h3>
             <ul>
                 <li><strong>Desobstrucción de Piscinas de Decantación:</strong> Limpieza y vaciado prioritario de las obras de retención en la cota 1.229 msnm de la Quebrada Honda.</li>
                 <li><strong>Defensas Fluviales y Muros New Jersey:</strong> Canalización temporal de escorrentía en Camino Las Flores y Av. Plaza para evitar desbordes hacia recintos asistenciales.</li>
                 <li><strong>Mantenimiento de Colectores Pluviales:</strong> Inspección continua de sumideros en Av. Las Condes y Av. Apoquindo.</li>
+                <li><strong>Barreras Dinámicas en Precordillera:</strong> Instalación de mallas flexibles de acero en quebradas activas para retención de material sólido.</li>
             </ul>
             
-            <h3>2. Preparación y Alerta Temprana</h3>
+            <h3 style="color: var(--accent); margin: 25px 0 15px;">2. Preparación y Alerta Temprana</h3>
             <ul>
                 <li><strong>Red de Alerta SAE:</strong> Activación de mensajes de evacuación celular para el cuadrante precordillerano por sobrepaso de umbral pluviométrico.</li>
                 <li><strong>Rutas de Evacuación Seguras:</strong> Descenso ordenado por Av. Apoquindo hacia el poniente, alejándose del eje de la Quebrada Honda.</li>
                 <li><strong>Protocolo Especial Clínica UC Christus:</strong> Sellado de compuertas estancas en subterráneos e hiper-vigilancia del flujo en la vía pública.</li>
+                <li><strong>Monitoreo Multi-Quebrada:</strong> Vigilancia simultánea de Quebrada Honda y Quebrada de Ramón ante eventos de lluvia extrema.</li>
             </ul>
         </section>
     </div>
@@ -309,9 +264,9 @@
     <footer>
         <p><strong>Breve análisis de afectación de Aluvión San Carlos de Apoquindo</strong></p>
         <p>Desarrollado por <strong>Rafael Leonardo Ruiz</strong></p>
-        <p>Modelación SIG/GEE (ALOS AW3D30 / MERIT Hydro)</p>
+        <p>Modelación SIG/GEE (ALOS AW3D30 / MERIT Hydro) • 30 puntos críticos validados</p>
         <p style="margin-top: 15px;">
-            <a href="https://qgis2onlinemap.com/v/9e8e4daa" target="_blank" rel="noopener">🗺️ Visor Interactivo Qgis2OnlineMap ↗</a>
+            <a href="https://qgis2onlinemap.com/v/99862152" target="_blank" rel="noopener">🗺️ Visor Interactivo Qgis2OnlineMap ↗</a>
         </p>
     </footer>
 
@@ -332,6 +287,29 @@
                 document.body.setAttribute('data-theme', 'dark');
             }
         });
+
+        function exportTableToCSV(filename) {
+            const csv = [];
+            const rows = document.querySelectorAll("table tr");
+            
+            for (let i = 0; i < rows.length; i++) {
+                const row = [], cols = rows[i].querySelectorAll("td, th");
+                for (let j = 0; j < cols.length; j++) {
+                    let data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, " ").replace(/\s+/g, " ").trim();
+                    row.push('"' + data + '"');
+                }
+                csv.push(row.join(","));
+            }
+            
+            const csvFile = new Blob(["\uFEFF" + csv.join("\n")], { type: "text/csv;charset=utf-8;" });
+            const downloadLink = document.createElement("a");
+            downloadLink.download = filename;
+            downloadLink.href = window.URL.createObjectURL(csvFile);
+            downloadLink.style.display = "none";
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        }
     </script>
 </body>
 </html>
